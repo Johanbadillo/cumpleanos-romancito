@@ -18,7 +18,8 @@ export default function Home() {
 
   // Configura la fecha del cumpleaños aqui
   // Formato: new Date('YYYY-MM-DD')
-  const birthdayDate = new Date('2026-12-25'); // Cambia esta fecha
+  // Cumpleaños: 24 de agosto (Colombia - Zona Horaria: UTC-5)
+  const birthdayDate = new Date('2025-08-24T00:00:00-05:00'); // 24 de agosto, zona horaria Colombia
 
   // Canciones de ejemplo (sin URLs reales)
   const songs = [

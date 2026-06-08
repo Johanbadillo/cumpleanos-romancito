@@ -17,6 +17,7 @@ interface TimeRemaining {
  * Componente Countdown - Contador regresivo animado
  * Diseño: Estilo romántico con paleta pastel
  * Animaciones: Pulseo suave, cambios de color dinámicos
+ * Zona Horaria: Colombia (UTC-5)
  */
 export default function Countdown({ targetDate, title = 'Falta para el cumpleaños' }: CountdownProps) {
   const [timeRemaining, setTimeRemaining] = useState<TimeRemaining>({
@@ -29,9 +30,12 @@ export default function Countdown({ targetDate, title = 'Falta para el cumpleañ
 
   useEffect(() => {
     const calculateTimeRemaining = () => {
-      const now = new Date().getTime();
+      // Obtener la hora actual en zona horaria de Colombia (UTC-5)
+      const now = new Date();
+      const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+      const nowTime = colombiaTime.getTime();
       const target = targetDate.getTime();
-      const difference = target - now;
+      const difference = target - nowTime;
 
       if (difference <= 0) {
         setTimeRemaining({
@@ -87,10 +91,10 @@ export default function Countdown({ targetDate, title = 'Falta para el cumpleañ
     return (
       <div className="romantic-card text-center py-12 fade-in-up">
         <h3 className="text-3xl md:text-4xl font-bold text-rosa-pastel mb-4">
-          ¡Feliz Cumpleaños!
+          ¡Feliz Cumpleanos!
         </h3>
         <p className="text-lg text-gray-600">
-          Hoy es tu día especial. ¡Que sea maravilloso!
+          Hoy es tu dia especial. Que sea maravilloso!
         </p>
         <div className="mt-6 text-4xl animate-bounce">
           🎉 💕 🎂
@@ -105,12 +109,12 @@ export default function Countdown({ targetDate, title = 'Falta para el cumpleañ
         {title}
       </h3>
       <p className="text-gray-500 mb-8 md:mb-12">
-        Cada segundo nos acerca a tu día especial
+        Cada segundo nos acerca a tu dia especial
       </p>
 
       {/* Grid de contadores */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 justify-items-center">
-        <TimeUnit value={timeRemaining.days} label="Días" />
+        <TimeUnit value={timeRemaining.days} label="Dias" />
         <TimeUnit value={timeRemaining.hours} label="Horas" />
         <TimeUnit value={timeRemaining.minutes} label="Minutos" />
         <TimeUnit value={timeRemaining.seconds} label="Segundos" />
