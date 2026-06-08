@@ -3,6 +3,7 @@ import RomanticButton from '@/components/RomanticButton';
 import RomanticCard from '@/components/RomanticCard';
 import FloatingElements from '@/components/FloatingElements';
 import MusicPlayer from '@/components/MusicPlayer';
+import Countdown from '@/components/Countdown';
 import { Heart } from 'lucide-react';
 
 /**
@@ -14,6 +15,10 @@ export default function Home() {
   const [showGallery, setShowGallery] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
+
+  // Configura la fecha del cumpleaños aqui
+  // Formato: new Date('YYYY-MM-DD')
+  const birthdayDate = new Date('2026-12-25'); // Cambia esta fecha
 
   // Canciones de ejemplo (sin URLs reales)
   const songs = [
@@ -72,6 +77,11 @@ export default function Home() {
 
       {/* Contenido principal */}
       <div className="relative z-10 container mx-auto px-4 py-16">
+        {/* Sección del Contador Regresivo */}
+        <div className="mb-16">
+          <Countdown targetDate={birthdayDate} title="Falta para tu cumpleanos" />
+        </div>
+
         {/* Sección de Navegación */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           <RomanticCard
