@@ -72,7 +72,7 @@ export default function Countdown({ targetDate, title = 'Falta para el cumpleañ
     <div className="flex flex-col items-center">
       <div className="relative mb-3">
         {/* Círculo de fondo animado */}
-        <div className="absolute inset-0 bg-gradient-to-br from-rosa-pastel to-celeste-romantic rounded-full blur-md opacity-30 animate-pulse"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-rosa-pastel to-celeste-romantic rounded-full blur-md opacity-30" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}></div>
         
         {/* Caja del número */}
         <div className="relative bg-white rounded-2xl w-20 h-20 md:w-24 md:h-24 flex items-center justify-center shadow-romantic-lg border-2 border-rosa-pastel">
@@ -96,7 +96,7 @@ export default function Countdown({ targetDate, title = 'Falta para el cumpleañ
         <p className="text-lg text-gray-600">
           Hoy es tu dia especial. Que sea maravilloso!
         </p>
-        <div className="mt-6 text-4xl animate-bounce">
+        <div className="mt-6 text-4xl" style={{ animation: 'bounce 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite' }}>
           🎉 💕 🎂
         </div>
       </div>
