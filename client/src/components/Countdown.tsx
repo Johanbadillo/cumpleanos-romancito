@@ -122,11 +122,11 @@ export default function Countdown({ targetDate, title = 'Falta para el cumpleañ
 
       {/* Decoración inferior */}
       <div className="mt-8 md:mt-12 flex justify-center gap-4">
-        <span className="text-2xl animate-pulse">🌷</span>
-        <span className="text-2xl animate-pulse" style={{ animationDelay: '0.2s' }}>
+        <span className="text-2xl" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>🌷</span>
+        <span className="text-2xl" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite 0.2s' }}>
           ✨
         </span>
-        <span className="text-2xl animate-pulse" style={{ animationDelay: '0.4s' }}>
+        <span className="text-2xl" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite 0.4s' }}>
           🌙
         </span>
       </div>
