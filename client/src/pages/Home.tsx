@@ -4,6 +4,7 @@ import RomanticCard from '@/components/RomanticCard';
 import FloatingElements from '@/components/FloatingElements';
 import MusicPlayer from '@/components/MusicPlayer';
 import Countdown from '@/components/Countdown';
+import Footer from '@/components/Footer';
 import { Heart } from 'lucide-react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
@@ -203,16 +204,13 @@ export default function Home() {
           </div>
         )}
 
-        {/* Pie de página */}
-        <div className="text-center py-12 fade-in-up border-t border-gray-200 mt-12">
-          <p className="text-gray-600 mb-3 text-lg">
-            Hecho con amor para ti en tu dia especial
-          </p>
-          <p className="text-sm text-gray-400">
-            Cumpleanos Romantico 2026
-          </p>
-        </div>
       </div>
+
+      {/* Pie de página elegante */}
+      <Footer 
+        birthdayDate={birthdayDate}
+        romanticMessage="Cada día contigo es un regalo que atesoro. Te amo más cada mañana y cada noche. Feliz cumpleaños a la mujer que hace mi vida completa. 💕"
+      />
     </div>
   );
 }
