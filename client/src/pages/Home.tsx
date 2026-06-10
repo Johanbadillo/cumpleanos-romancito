@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import RomanticButton from '@/components/RomanticButton';
 import RomanticCard from '@/components/RomanticCard';
 import FloatingElements from '@/components/FloatingElements';
 import MusicPlayer from '@/components/MusicPlayer';
 import Countdown from '@/components/Countdown';
 import { Heart } from 'lucide-react';
+import { useAuth } from '@/_core/hooks/useAuth';
+import { trpc } from '@/lib/trpc';
 
 /**
  * Página Principal - Cumpleaños Romántico
@@ -12,9 +14,15 @@ import { Heart } from 'lucide-react';
  * Elementos: Portada con imagen, navegación, música, animaciones
  */
 export default function Home() {
+  const { user } = useAuth();
   const [showGallery, setShowGallery] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
+
+  // Cargar datos de la base de datos
+  const { data: dbPhotos = [] } = trpc.photos.list.useQuery();
+  const { data: dbMessages = [] } = trpc.messages.list.useQuery();
+  const { data: dbSongs = [] } = trpc.songs.list.useQuery();
 
   // Configura la fecha del cumpleaños aqui
   // Formato: new Date('YYYY-MM-DD')
