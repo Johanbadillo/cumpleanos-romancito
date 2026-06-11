@@ -4,6 +4,7 @@ import RomanticCard from '@/components/RomanticCard';
 import FloatingElements from '@/components/FloatingElements';
 import Countdown from '@/components/Countdown';
 import Footer from '@/components/Footer';
+import LoadingSkeleton from '@/components/LoadingSkeleton';
 import { Heart } from 'lucide-react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
@@ -20,9 +21,9 @@ export default function Home() {
   const [showMusic, setShowMusic] = useState(false);
 
   // Cargar datos de la base de datos
-  const { data: dbPhotos = [] } = trpc.photos.list.useQuery();
-  const { data: dbMessages = [] } = trpc.messages.list.useQuery();
-  const { data: dbSongs = [] } = trpc.songs.list.useQuery();
+  const { data: dbPhotos = [], isLoading: isLoadingPhotos } = trpc.photos.list.useQuery();
+  const { data: dbMessages = [], isLoading: isLoadingMessages } = trpc.messages.list.useQuery();
+  const { data: dbSongs = [], isLoading: isLoadingSongs } = trpc.songs.list.useQuery();
 
   // Configura la fecha del cumpleaños aqui
   // Formato: new Date('YYYY-MM-DD')
@@ -157,7 +158,9 @@ export default function Home() {
         {showGallery && (
           <div className="mb-16 slide-in-left">
             <RomanticCard title="Galeria de Fotos" animated>
-              {dbPhotos.length === 0 ? (
+              {isLoadingPhotos ? (
+                <LoadingSkeleton type="photo" count={3} />
+              ) : dbPhotos.length === 0 ? (
                 <p className="text-center text-gray-500 py-8">No hay fotos aún. ¡Agrega las primeras desde <a href="/content" className="text-rosa-pastel font-semibold">/content</a>!</p>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
@@ -188,7 +191,9 @@ export default function Home() {
         {showMessages && (
           <div className="mb-16 slide-in-right">
             <RomanticCard title="Mensajes Especiales" animated>
-              {dbMessages.length === 0 ? (
+              {isLoadingMessages ? (
+                <LoadingSkeleton type="message" count={2} />
+              ) : dbMessages.length === 0 ? (
                 <p className="text-center text-gray-500 py-8">No hay mensajes aún. ¡Agrega los primeros desde <a href="/content" className="text-rosa-pastel font-semibold">/content</a>!</p>
               ) : (
                 <div className="space-y-6">
@@ -218,7 +223,9 @@ export default function Home() {
         {showMusic && (
           <div className="mb-16 slide-in-up">
             <RomanticCard title="Playlist Romantica" animated>
-              {dbSongs.length === 0 ? (
+              {isLoadingSongs ? (
+                <LoadingSkeleton type="spotify" count={2} />
+              ) : dbSongs.length === 0 ? (
                 <p className="text-center text-gray-500 py-8">No hay canciones aún. ¡Agrega las primeras desde <a href="/content" className="text-rosa-pastel font-semibold">/content</a>!</p>
               ) : (
                 <div className="space-y-6">
