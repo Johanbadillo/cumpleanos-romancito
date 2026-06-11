@@ -22,7 +22,7 @@ export const appRouter = router({
   // Router para fotos
   photos: router({
     list: publicProcedure.query(() => getAllPhotos()),
-    create: protectedProcedure
+    create: publicProcedure
       .input(z.object({
         title: z.string().min(1),
         description: z.string().optional(),
@@ -39,7 +39,7 @@ export const appRouter = router({
   // Router para mensajes
   messages: router({
     list: publicProcedure.query(() => getAllMessages()),
-    create: protectedProcedure
+    create: publicProcedure
       .input(z.object({
         title: z.string().min(1),
         content: z.string().min(1),
@@ -55,7 +55,7 @@ export const appRouter = router({
   // Router para canciones
   songs: router({
     list: publicProcedure.query(() => getAllSongs()),
-    create: protectedProcedure
+    create: publicProcedure
       .input(z.object({
         title: z.string().min(1),
         artist: z.string().min(1),

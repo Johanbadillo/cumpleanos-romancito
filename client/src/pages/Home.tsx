@@ -2,7 +2,6 @@ import { useState } from 'react';
 import RomanticButton from '@/components/RomanticButton';
 import RomanticCard from '@/components/RomanticCard';
 import FloatingElements from '@/components/FloatingElements';
-import MusicPlayer from '@/components/MusicPlayer';
 import Countdown from '@/components/Countdown';
 import Footer from '@/components/Footer';
 import { Heart } from 'lucide-react';
@@ -30,21 +29,24 @@ export default function Home() {
   // Cumpleaños: 24 de agosto (Colombia - Zona Horaria: UTC-5)
   const birthdayDate = new Date('2026-08-24T00:00:00-05:00'); // 24 de agosto 2026, zona horaria Colombia
 
-  // Canciones de ejemplo (sin URLs reales)
-  const songs = [
-    {
-      id: '1',
-      title: 'Cancion de Amor',
-      artist: 'Artista Romantico',
-      url: 'https://example.com/song1.mp3',
-    },
-    {
-      id: '2',
-      title: 'Momentos Especiales',
-      artist: 'Artista Romantico',
-      url: 'https://example.com/song2.mp3',
-    },
-  ];
+  // Extraer ID de Spotify de una URL
+  const getSpotifyTrackId = (url: string): string | null => {
+    const match = url.match(/track\/([a-zA-Z0-9]+)/);
+    return match ? match[1] : null;
+  };
+
+  // Extraer ID de YouTube de una URL
+  const getYouTubeVideoId = (url: string): string | null => {
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+      /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    ];
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+    return null;
+  };
 
   return (
     <div className="min-h-screen bg-blanco-cremoso">
@@ -107,7 +109,7 @@ export default function Home() {
               variant="primary"
               size="md"
             >
-              {showGallery ? 'Cerrar Galeria' : 'Ver Galeria'}
+              {showGallery ? 'Cerrar Galeria' : 'Ver Galeria'} ({dbPhotos.length})
             </RomanticButton>
           </RomanticCard>
 
@@ -124,7 +126,7 @@ export default function Home() {
               variant="primary"
               size="md"
             >
-              {showMessages ? 'Cerrar Mensajes' : 'Leer Mensajes'}
+              {showMessages ? 'Cerrar Mensajes' : 'Leer Mensajes'} ({dbMessages.length})
             </RomanticButton>
           </RomanticCard>
         </div>
@@ -145,61 +147,149 @@ export default function Home() {
                 variant="secondary"
                 size="md"
               >
-                {showMusic ? 'Ocultar Reproductor' : 'Reproducir Musica'}
+                {showMusic ? 'Ocultar Musica' : 'Reproducir Musica'} ({dbSongs.length})
               </RomanticButton>
             </div>
-            {showMusic && <MusicPlayer songs={songs} autoPlay={false} />}
           </RomanticCard>
         </div>
 
-        {/* Galería (placeholder) */}
+        {/* Galería de Fotos */}
         {showGallery && (
           <div className="mb-16 slide-in-left">
             <RomanticCard title="Galeria de Fotos" animated>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div
-                    key={i}
-                    className="bg-gradient-to-br from-rosa-pastel to-celeste-romantic rounded-2xl h-48 flex items-center justify-center text-white text-3xl hover:shadow-romantic-lg transition-all duration-300 hover:scale-105"
-                  >
-                    Foto {i}
-                  </div>
-                ))}
-              </div>
+              {dbPhotos.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">No hay fotos aún. ¡Agrega las primeras desde <a href="/content" className="text-rosa-pastel font-semibold">/content</a>!</p>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                  {dbPhotos.map((photo: any) => (
+                    <div
+                      key={photo.id}
+                      className="relative rounded-2xl h-48 overflow-hidden hover:shadow-romantic-lg transition-all duration-300 hover:scale-105 cursor-pointer"
+                    >
+                      <img
+                        src={photo.imageUrl}
+                        alt={photo.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/0 hover:bg-black/20 transition-all duration-300 flex items-end">
+                        <p className="text-white text-sm font-semibold p-3 bg-gradient-to-t from-black/60 w-full">
+                          {photo.title}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </RomanticCard>
           </div>
         )}
 
-        {/* Mensajes (placeholder) */}
+        {/* Mensajes desde la base de datos */}
         {showMessages && (
           <div className="mb-16 slide-in-right">
             <RomanticCard title="Mensajes Especiales" animated>
-              <div className="space-y-6">
-                <div className="border-l-4 border-rosa-pastel pl-6 py-3 hover:bg-gray-50 rounded transition-colors">
-                  <p className="font-semibold text-rosa-pastel mb-2 text-lg">
-                    Mensaje 1
-                  </p>
-                  <p className="text-gray-600">
-                    Cada dia contigo es un regalo especial que atesoro en mi corazon...
-                  </p>
+              {dbMessages.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">No hay mensajes aún. ¡Agrega los primeros desde <a href="/content" className="text-rosa-pastel font-semibold">/content</a>!</p>
+              ) : (
+                <div className="space-y-6">
+                  {dbMessages.map((msg: any, idx: number) => (
+                    <div
+                      key={msg.id}
+                      className={`border-l-4 ${idx % 2 === 0 ? 'border-rosa-pastel' : 'border-celeste-romantic'} pl-6 py-3 hover:bg-gray-50 rounded transition-colors`}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-2xl">{msg.emoji || '💕'}</span>
+                        <p className={`font-semibold ${idx % 2 === 0 ? 'text-rosa-pastel' : 'text-celeste-romantic'} text-lg`}>
+                          {msg.title}
+                        </p>
+                      </div>
+                      <p className="text-gray-600 whitespace-pre-wrap">
+                        {msg.content}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-                <div className="border-l-4 border-celeste-romantic pl-6 py-3 hover:bg-gray-50 rounded transition-colors">
-                  <p className="font-semibold text-celeste-romantic mb-2 text-lg">
-                    Mensaje 2
-                  </p>
-                  <p className="text-gray-600">
-                    Tu sonrisa ilumina mis dias mas oscuros y llena mi vida de alegria...
-                  </p>
+              )}
+            </RomanticCard>
+          </div>
+        )}
+
+        {/* Música desde la base de datos */}
+        {showMusic && (
+          <div className="mb-16 slide-in-up">
+            <RomanticCard title="Playlist Romantica" animated>
+              {dbSongs.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">No hay canciones aún. ¡Agrega las primeras desde <a href="/content" className="text-rosa-pastel font-semibold">/content</a>!</p>
+              ) : (
+                <div className="space-y-6">
+                  {dbSongs.map((song: any, idx: number) => {
+                    const spotifyId = getSpotifyTrackId(song.musicUrl);
+                    const youtubeId = getYouTubeVideoId(song.musicUrl);
+
+                    return (
+                      <div key={song.id} className="border border-rosa-pastel/20 rounded-lg p-4 hover:shadow-md transition-all">
+                        <div className="flex items-start gap-4 mb-4">
+                          {song.coverImageUrl && (
+                            <img
+                              src={song.coverImageUrl}
+                              alt={song.title}
+                              className="w-16 h-16 rounded object-cover"
+                            />
+                          )}
+                          <div className="flex-1">
+                            <p className="font-semibold text-lg text-rosa-pastel">{idx + 1}. {song.title}</p>
+                            <p className="text-sm text-gray-600">{song.artist}</p>
+                          </div>
+                        </div>
+
+                        {/* Spotify Embed */}
+                        {spotifyId && (
+                          <div className="mb-4">
+                            <iframe
+                              src={`https://open.spotify.com/embed/track/${spotifyId}?utm_source=generator`}
+                              width="100%"
+                              height="80"
+                              frameBorder="0"
+                              allowFullScreen
+                              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                              loading="lazy"
+                              className="rounded"
+                            ></iframe>
+                          </div>
+                        )}
+
+                        {/* YouTube Embed */}
+                        {youtubeId && !spotifyId && (
+                          <div className="mb-4 aspect-video">
+                            <iframe
+                              width="100%"
+                              height="100%"
+                              src={`https://www.youtube.com/embed/${youtubeId}`}
+                              title={song.title}
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              allowFullScreen
+                              className="rounded"
+                            ></iframe>
+                          </div>
+                        )}
+
+                        {/* Link directo si no es Spotify ni YouTube */}
+                        {!spotifyId && !youtubeId && (
+                          <a
+                            href={song.musicUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block bg-rosa-pastel text-white px-4 py-2 rounded-lg hover:bg-rosa-pastel/90 transition-colors text-sm"
+                          >
+                            Escuchar en {song.musicUrl.includes('spotify') ? 'Spotify' : 'otra plataforma'}
+                          </a>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-                <div className="border-l-4 border-rosa-pastel pl-6 py-3 hover:bg-gray-50 rounded transition-colors">
-                  <p className="font-semibold text-rosa-pastel mb-2 text-lg">
-                    Mensaje 3
-                  </p>
-                  <p className="text-gray-600">
-                    Te amo mas cada dia que pasa, eres mi mayor bendicion...
-                  </p>
-                </div>
-              </div>
+              )}
             </RomanticCard>
           </div>
         )}
