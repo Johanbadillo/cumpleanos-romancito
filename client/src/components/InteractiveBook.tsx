@@ -1,7 +1,7 @@
 /**
- * Componente InteractiveBook
- * Libro interactivo con portada y páginas que se pueden pasar
- * Historia romántica inspirada en "El Principito y la Rosa"
+ * Componente InteractiveBook - Versión Simplificada
+ * Solo portada y páginas con fondo difuminado
+ * Sin mensajes de instrucciones ni fondo blanco
  */
 
 import { useState } from 'react';
@@ -97,25 +97,25 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      {/* Modal del Libro */}
-      <div className="relative w-full max-w-4xl h-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      {/* Modal del Libro - Solo contenido, sin fondo blanco */}
+      <div className="relative w-full max-w-5xl h-[600px] rounded-2xl shadow-2xl overflow-hidden">
         {/* Botón Cerrar */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 z-10 p-2 hover:bg-rosa-pastel/20 rounded-full transition-all duration-300"
+          className="absolute top-4 right-4 z-20 p-2 hover:bg-rosa-pastel/30 rounded-full transition-all duration-300 backdrop-blur-sm"
         >
-          <X className="w-6 h-6 text-rosa-pastel" />
+          <X className="w-6 h-6 text-white drop-shadow-lg" />
         </button>
 
-        {/* Contenedor del Libro */}
+        {/* Contenedor del Libro - Dos columnas */}
         <div className="flex h-full">
           {/* Página Izquierda */}
-          <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gradient-to-br from-blanco-cremoso to-rosa-pastel/10 overflow-y-auto">
+          <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gradient-to-br from-celeste-romantic/5 to-rosa-pastel/5 overflow-y-auto">
             {currentPage.isCover ? (
               <div className="flex flex-col items-center justify-center h-full gap-6">
                 <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663692923675/guASUUg4cJC9WiZ2QEx5gQ/romantic-book-cover-LvMeXK2UMYt2GATzNhYBZF.webp"
+                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663692923675/guASUUg4cJC9WiZ2QEx5gQ/stitch-angel-book-cover-Y7shvXVdK9WUeupBTChuGd.webp"
                   alt="Portada del Libro"
                   className="w-64 h-80 object-cover rounded-lg shadow-lg"
                   style={{
@@ -126,7 +126,7 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
             ) : (
               <div className="w-full">
                 <h2 className="text-2xl font-bold text-rosa-pastel mb-6 text-center">{currentPage.title}</h2>
-                <p className="text-gray-700 leading-relaxed text-justify whitespace-pre-wrap">
+                <p className="text-gray-700 leading-relaxed text-justify whitespace-pre-wrap text-sm md:text-base">
                   {currentPage.content}
                 </p>
               </div>
@@ -134,43 +134,40 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
           </div>
 
           {/* Página Derecha - Decorativa */}
-          <div className="flex-1 hidden md:flex flex-col items-center justify-center p-8 bg-gradient-to-bl from-celeste-romantic/10 to-blanco-cremoso">
+          <div className="flex-1 hidden md:flex flex-col items-center justify-center p-8 bg-gradient-to-bl from-rosa-pastel/5 to-celeste-romantic/5">
             {currentPageIndex === 0 ? (
-              <div className="text-center">
-                <p className="text-lg font-semibold text-celeste-romantic mb-4">
-                  ✨ Haz clic en las flechas para explorar esta historia de amor ✨
-                </p>
-                <div className="text-6xl mb-4">📖</div>
-                <p className="text-sm text-gray-600">
-                  Una historia romántica inspirada en El Principito
+              <div className="text-center space-y-6">
+                <div className="text-7xl animate-bounce">💕</div>
+                <p className="text-lg font-semibold text-celeste-romantic">
+                  Una historia de amor eterno
                 </p>
               </div>
             ) : (
               <div className="text-center space-y-4">
-                <div className="text-5xl">💕</div>
-                <p className="text-gray-700 italic">
+                <div className="text-6xl">✨</div>
+                <p className="text-gray-700 italic text-sm md:text-base">
                   "El verdadero amor es lo más valioso que existe"
                 </p>
-                <div className="text-4xl mt-6">🌹</div>
+                <div className="text-5xl mt-6">🌹</div>
               </div>
             )}
           </div>
         </div>
 
         {/* Controles de Navegación */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-4 z-10">
+        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-4 z-20">
           {/* Botón Anterior */}
           <button
             onClick={handlePrevPage}
             disabled={currentPageIndex === 0}
-            className="p-2 rounded-full bg-rosa-pastel/80 hover:bg-rosa-pastel disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110"
+            className="p-2 rounded-full bg-rosa-pastel/80 hover:bg-rosa-pastel disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg"
           >
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
 
           {/* Indicador de Página */}
-          <div className="text-center min-w-[100px]">
-            <p className="text-sm font-semibold text-gray-700">
+          <div className="text-center min-w-[100px] bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+            <p className="text-sm font-semibold text-white drop-shadow-lg">
               {currentPageIndex + 1} / {BOOK_PAGES.length}
             </p>
           </div>
@@ -179,7 +176,7 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
           <button
             onClick={handleNextPage}
             disabled={currentPageIndex === BOOK_PAGES.length - 1}
-            className="p-2 rounded-full bg-celeste-romantic/80 hover:bg-celeste-romantic disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110"
+            className="p-2 rounded-full bg-celeste-romantic/80 hover:bg-celeste-romantic disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg"
           >
             <ChevronRight className="w-6 h-6 text-white" />
           </button>
@@ -195,17 +192,6 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
             to {
               opacity: 1;
               transform: scale(1);
-            }
-          }
-
-          @keyframes pageFlip {
-            0% {
-              opacity: 0;
-              transform: rotateY(90deg);
-            }
-            100% {
-              opacity: 1;
-              transform: rotateY(0deg);
             }
           }
         `}</style>
