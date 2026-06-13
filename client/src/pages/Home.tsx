@@ -6,6 +6,7 @@ import Countdown from '@/components/Countdown';
 import Footer from '@/components/Footer';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import PageLoadingScreen from '@/components/PageLoadingScreen';
+import InteractiveBook from '@/components/InteractiveBook';
 import { Heart } from 'lucide-react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
@@ -20,6 +21,7 @@ export default function Home() {
   const [showGallery, setShowGallery] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
+  const [showBook, setShowBook] = useState(false);
 
   // Cargar datos de la base de datos
   const { data: dbPhotos = [], isLoading: isLoadingPhotos } = trpc.photos.list.useQuery();
@@ -135,6 +137,26 @@ export default function Home() {
               size="md"
             >
               {showMessages ? 'Cerrar Mensajes' : 'Leer Mensajes'} ({dbMessages.length})
+            </RomanticButton>
+          </RomanticCard>
+        </div>
+
+        {/* Sección del Libro Interactivo */}
+        <div className="mb-16">
+          <RomanticCard
+            title="Ven a explorar esta maravilla juntos"
+            subtitle="Una historia de amor eterno"
+            animated
+          >
+            <p className="mb-6 text-gray-600">
+              Sumérgete en una historia romántica inspirada en El Principito y la Rosa. Un viaje mágico a través del universo del amor.
+            </p>
+            <RomanticButton
+              onClick={() => setShowBook(true)}
+              variant="primary"
+              size="md"
+            >
+              Abrir el Libro
             </RomanticButton>
           </RomanticCard>
         </div>
@@ -309,6 +331,9 @@ export default function Home() {
         )}
 
       </div>
+
+      {/* Libro Interactivo Modal */}
+      <InteractiveBook isOpen={showBook} onClose={() => setShowBook(false)} />
 
       {/* Pie de página elegante */}
       <Footer 
