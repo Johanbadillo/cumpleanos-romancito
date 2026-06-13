@@ -5,6 +5,7 @@ import FloatingElements from '@/components/FloatingElements';
 import Countdown from '@/components/Countdown';
 import Footer from '@/components/Footer';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
+import PageLoadingScreen from '@/components/PageLoadingScreen';
 import { Heart } from 'lucide-react';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
@@ -49,8 +50,14 @@ export default function Home() {
     return null;
   };
 
+  // Determinar si la página está cargando
+  const isPageLoading = isLoadingPhotos || isLoadingMessages || isLoadingSongs;
+
   return (
     <div className="min-h-screen bg-blanco-cremoso">
+      {/* Pantalla de carga con Cinnamoroll */}
+      <PageLoadingScreen isLoading={isPageLoading} minDuration={5000} />
+
       {/* Elementos flotantes animados */}
       <FloatingElements count={6} />
 
