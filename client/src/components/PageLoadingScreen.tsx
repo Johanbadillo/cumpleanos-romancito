@@ -2,6 +2,7 @@
  * Componente PageLoadingScreen
  * Pantalla de carga con Cinnamoroll comiendo zanahoria
  * Se muestra mientras se cargan todos los elementos de la página
+ * Mensajes románticos cambian aleatoriamente cada 1.5 segundos
  */
 
 import { useEffect, useState } from 'react';
@@ -11,14 +12,49 @@ interface PageLoadingScreenProps {
   minDuration?: number; // Duración mínima en ms (default: 5000ms = 5s)
 }
 
+const ROMANTIC_MESSAGES = [
+  '💕 Preparando tu sorpresa especial...',
+  '🌷 Cargando momentos mágicos...',
+  '✨ Tu cumpleaños merece lo mejor...',
+  '🌙 Reuniendo toda mi amor para ti...',
+  '💫 Creando recuerdos inolvidables...',
+  '🎀 Tu día especial está casi aquí...',
+  '❤️ Cargando todo mi amor...',
+  '🌸 Preparando la mejor sorpresa...',
+  '💖 Cada segundo contigo es especial...',
+  '⭐ Tu felicidad es mi prioridad...',
+  '🎁 Sorpresas románticas en camino...',
+  '💝 Cargando momentos de amor...',
+  '🌺 Tú eres mi razón de sonreír...',
+  '✨ Magia y amor en cada detalle...',
+  '💕 Eternamente tuyo, siempre...',
+];
+
 export default function PageLoadingScreen({ isLoading, minDuration = 5000 }: PageLoadingScreenProps) {
   const [showLoading, setShowLoading] = useState(isLoading);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [currentMessage, setCurrentMessage] = useState(ROMANTIC_MESSAGES[0]);
 
+  // Cambiar mensaje cada 1.5 segundos
+  useEffect(() => {
+    if (!showLoading) return;
+
+    const messageTimer = setInterval(() => {
+      const randomIndex = Math.floor(Math.random() * ROMANTIC_MESSAGES.length);
+      setCurrentMessage(ROMANTIC_MESSAGES[randomIndex]);
+    }, 1500);
+
+    return () => clearInterval(messageTimer);
+  }, [showLoading]);
+
+  // Lógica de duración mínima y visibilidad
   useEffect(() => {
     if (isLoading) {
       setShowLoading(true);
       setStartTime(Date.now());
+      // Mostrar primer mensaje aleatorio
+      const randomIndex = Math.floor(Math.random() * ROMANTIC_MESSAGES.length);
+      setCurrentMessage(ROMANTIC_MESSAGES[randomIndex]);
     } else if (startTime) {
       const elapsedTime = Date.now() - startTime;
       if (elapsedTime < minDuration) {
@@ -70,10 +106,15 @@ export default function PageLoadingScreen({ isLoading, minDuration = 5000 }: Pag
           </div>
         </div>
 
-        {/* Texto de carga */}
+        {/* Texto de carga con mensajes que cambian */}
         <div className="text-center">
-          <p className="text-lg font-semibold text-rosa-pastel mb-2">
-            Cargando tu sorpresa especial...
+          <p 
+            className="text-lg font-semibold text-rosa-pastel mb-2 h-8 transition-all duration-500"
+            style={{
+              animation: 'fadeInOut 1.5s ease-in-out infinite',
+            }}
+          >
+            {currentMessage}
           </p>
           
           {/* Animación de puntos */}
@@ -154,6 +195,15 @@ export default function PageLoadingScreen({ isLoading, minDuration = 5000 }: Pag
           100% {
             width: 0%;
             transform: translateX(100%);
+          }
+        }
+
+        @keyframes fadeInOut {
+          0%, 100% {
+            opacity: 0.7;
+          }
+          50% {
+            opacity: 1;
           }
         }
       `}</style>

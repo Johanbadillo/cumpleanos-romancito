@@ -171,3 +171,124 @@ El componente `PageLoadingScreen.tsx` incluye:
 ---
 
 **¡Disfruta de tu pantalla de carga personalizada!** 🎀✨
+
+
+---
+
+## Mensajes Románticos Aleatorios
+
+### ¿Cómo funciona?
+
+La pantalla de carga ahora muestra **15 mensajes románticos diferentes** que cambian aleatoriamente cada 1.5 segundos mientras se carga la página. Cada mensaje tiene un emoji especial que representa el sentimiento.
+
+### Mensajes Incluidos
+
+1. 💕 Preparando tu sorpresa especial...
+2. 🌷 Cargando momentos mágicos...
+3. ✨ Tu cumpleaños merece lo mejor...
+4. 🌙 Reuniendo toda mi amor para ti...
+5. 💫 Creando recuerdos inolvidables...
+6. 🎀 Tu día especial está casi aquí...
+7. ❤️ Cargando todo mi amor...
+8. 🌸 Preparando la mejor sorpresa...
+9. 💖 Cada segundo contigo es especial...
+10. ⭐ Tu felicidad es mi prioridad...
+11. 🎁 Sorpresas románticas en camino...
+12. 💝 Cargando momentos de amor...
+13. 🌺 Tú eres mi razón de sonreír...
+14. ✨ Magia y amor en cada detalle...
+15. 💕 Eternamente tuyo, siempre...
+
+### Personalizar los Mensajes
+
+En `client/src/components/PageLoadingScreen.tsx`, línea 14-30:
+
+```tsx
+const ROMANTIC_MESSAGES = [
+  '💕 Preparando tu sorpresa especial...',
+  '🌷 Cargando momentos mágicos...',
+  // ... más mensajes
+];
+```
+
+**Para agregar un nuevo mensaje:**
+1. Abre `PageLoadingScreen.tsx`
+2. Busca el array `ROMANTIC_MESSAGES`
+3. Agrega una nueva línea con tu mensaje: `'[emoji] Tu mensaje aquí...',`
+
+**Ejemplo:**
+```tsx
+const ROMANTIC_MESSAGES = [
+  '💕 Preparando tu sorpresa especial...',
+  '🌷 Cargando momentos mágicos...',
+  '💌 Mi amor por ti es infinito...', // ← Nuevo mensaje
+  // ... más mensajes
+];
+```
+
+### Cambiar la Velocidad de Cambio
+
+En `PageLoadingScreen.tsx`, línea 43:
+
+```tsx
+const messageTimer = setInterval(() => {
+  const randomIndex = Math.floor(Math.random() * ROMANTIC_MESSAGES.length);
+  setCurrentMessage(ROMANTIC_MESSAGES[randomIndex]);
+}, 1500); // ← Cambiar este número
+```
+
+- `1000` = Cambia cada 1 segundo (más rápido)
+- `1500` = Cambia cada 1.5 segundos (default)
+- `2000` = Cambia cada 2 segundos (más lento)
+- `3000` = Cambia cada 3 segundos (muy lento)
+
+### Ejemplos de Personalización
+
+**Ejemplo 1: Agregar mensajes personalizados**
+
+```tsx
+const ROMANTIC_MESSAGES = [
+  '💕 Preparando tu sorpresa especial...',
+  '🌷 Cargando momentos mágicos...',
+  '💌 Te amo más cada día...',
+  '🌹 Eres mi razón de vivir...',
+  '✨ Contigo todo es posible...',
+];
+```
+
+**Ejemplo 2: Cambiar emojis**
+
+```tsx
+const ROMANTIC_MESSAGES = [
+  '🎀 Preparando tu sorpresa especial...',
+  '🎁 Cargando momentos mágicos...',
+  '🎊 Tu cumpleaños merece lo mejor...',
+];
+```
+
+**Ejemplo 3: Cambiar velocidad a 2 segundos**
+
+```tsx
+const messageTimer = setInterval(() => {
+  const randomIndex = Math.floor(Math.random() * ROMANTIC_MESSAGES.length);
+  setCurrentMessage(ROMANTIC_MESSAGES[randomIndex]);
+}, 2000); // Cambio cada 2 segundos
+```
+
+---
+
+## Resumen de Características
+
+| Característica | Detalles |
+|---|---|
+| **Mensajes** | 15 mensajes románticos diferentes |
+| **Cambio** | Cada 1.5 segundos (configurable) |
+| **Emojis** | Cada mensaje tiene un emoji especial |
+| **Animación** | Fade in/out suave |
+| **Duración mínima** | 5 segundos (configurable) |
+| **Cinnamoroll** | Rebota mientras se carga |
+| **Partículas** | Tulipanes y estrellas flotantes |
+
+---
+
+**¡Disfruta de los mensajes románticos!** 💕✨
