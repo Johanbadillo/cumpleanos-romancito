@@ -160,9 +160,20 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
             ) : (currentPage as any).isPhotoPage ? (
               <div className="w-full h-full flex flex-col items-center justify-center gap-6">
                 {/* Marco elegante para la foto */}
-                <div className="relative">
+                <div className="relative" style={{
+                  animation: 'floatingFrame 3s ease-in-out infinite',
+                }}>
+                  {/* Efecto de brillo mágico */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 rounded-2xl" style={{
+                    animation: 'magicGlow 3s ease-in-out infinite',
+                    filter: 'blur(8px)',
+                  }} />
+                  
                   {/* Marco decorativo exterior */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-rosa-pastel to-celeste-romantic rounded-2xl p-6 shadow-lg" style={{ transform: 'rotate(0deg)' }}>
+                  <div className="absolute inset-0 bg-gradient-to-br from-rosa-pastel to-celeste-romantic rounded-2xl p-6 shadow-lg" style={{ 
+                    transform: 'rotate(0deg)',
+                    boxShadow: '0 0 30px rgba(255, 182, 193, 0.5), 0 0 60px rgba(173, 216, 230, 0.3)',
+                  }}>
                     {/* Marco interior blanco */}
                     <div className="bg-white rounded-xl p-4 h-full flex items-center justify-center">
                       {photoUrl ? (
@@ -279,6 +290,35 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
             to {
               opacity: 1;
               transform: scale(1);
+            }
+          }
+          
+          @keyframes floatingFrame {
+            0%, 100% {
+              transform: translateY(0px);
+            }
+            50% {
+              transform: translateY(-15px);
+            }
+          }
+          
+          @keyframes magicGlow {
+            0%, 100% {
+              opacity: 0;
+              transform: translateX(-100%);
+            }
+            50% {
+              opacity: 0.6;
+              transform: translateX(100%);
+            }
+          }
+          
+          @keyframes shimmer {
+            0% {
+              background-position: -1000px 0;
+            }
+            100% {
+              background-position: 1000px 0;
             }
           }
         `}</style>
