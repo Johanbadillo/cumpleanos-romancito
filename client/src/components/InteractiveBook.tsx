@@ -121,10 +121,33 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
     onClose();
   };
 
+  // Mostrar pétalos solo en la última página
+  const isPhotoPage = currentPageIndex === bookPages.length - 1;
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      {/* Pétalos de rosa cayendo en la última página */}
+      {isPhotoPage && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={`petal-${i}`}
+              className="absolute text-rosa-pastel text-2xl"
+              style={{
+                animation: `fallingPetal ${3 + Math.random() * 2}s linear infinite`,
+                left: `${Math.random() * 100}%`,
+                top: `-20px`,
+                opacity: 0.7 + Math.random() * 0.3,
+                animationDelay: `${Math.random() * 2}s`,
+              }}
+            >
+              🌹
+            </div>
+          ))}
+        </div>
+      )}
       {/* Audio para sonido de página */}
       <audio
         ref={audioRef}
@@ -319,6 +342,20 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
             }
             100% {
               background-position: 1000px 0;
+            }
+          }
+          
+          @keyframes fallingPetal {
+            0% {
+              transform: translateY(0) rotate(0deg);
+              opacity: 1;
+            }
+            50% {
+              transform: translateX(30px) rotate(180deg);
+            }
+            100% {
+              transform: translateY(100vh) rotate(360deg);
+              opacity: 0;
             }
           }
         `}</style>
