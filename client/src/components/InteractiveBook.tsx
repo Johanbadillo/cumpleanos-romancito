@@ -1,6 +1,7 @@
 /**
  * Componente InteractiveBook - Con Sonido y Fuente Elegante
  * Sonido realista de página girada + Fuente cursiva elegante
+ * Última página con marco para foto y dedicatoria
  */
 
 import { useState, useRef } from 'react';
@@ -9,6 +10,8 @@ import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 interface InteractiveBookProps {
   isOpen: boolean;
   onClose: () => void;
+  photoUrl?: string;
+  dedication?: string;
 }
 
 const BOOK_PAGES = [
@@ -72,10 +75,23 @@ Y si miras al cielo en las noches claras, podrás ver su luz brillando entre las
   },
 ];
 
-export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProps) {
+export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication }: InteractiveBookProps) {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const currentPage = BOOK_PAGES[currentPageIndex];
+  
+  // Agregar página de foto dinámicamente si se proporciona
+  const bookPages = photoUrl ? [
+    ...BOOK_PAGES,
+    {
+      id: 'page6',
+      title: 'Nuestra Historia',
+      subtitle: 'Dedicatoria Final',
+      isPhotoPage: true,
+      content: '',
+    },
+  ] : BOOK_PAGES;
+
+  const currentPage = bookPages[currentPageIndex];
 
   const playPageTurnSound = () => {
     if (audioRef.current) {
@@ -87,7 +103,7 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
   };
 
   const handleNextPage = () => {
-    if (currentPageIndex < BOOK_PAGES.length - 1) {
+    if (currentPageIndex < bookPages.length - 1) {
       playPageTurnSound();
       setCurrentPageIndex(currentPageIndex + 1);
     }
@@ -130,7 +146,7 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
         <div className="flex h-full">
           {/* Página Izquierda */}
           <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gradient-to-br from-celeste-romantic/5 to-rosa-pastel/5 overflow-y-auto">
-            {currentPage.isCover ? (
+            {(currentPage as any).isCover ? (
               <div className="flex flex-col items-center justify-center h-full gap-6">
                 <img
                   src="https://d2xsxph8kpxj0f.cloudfront.net/310519663692923675/guASUUg4cJC9WiZ2QEx5gQ/stitch-angel-book-cover-Y7shvXVdK9WUeupBTChuGd.webp"
@@ -141,16 +157,56 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
                   }}
                 />
               </div>
+            ) : (currentPage as any).isPhotoPage ? (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-6">
+                {/* Marco elegante para la foto */}
+                <div className="relative">
+                  {/* Marco decorativo exterior */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-rosa-pastel to-celeste-romantic rounded-2xl p-6 shadow-lg" style={{ transform: 'rotate(0deg)' }}>
+                    {/* Marco interior blanco */}
+                    <div className="bg-white rounded-xl p-4 h-full flex items-center justify-center">
+                      {photoUrl ? (
+                        <img
+                          src={photoUrl}
+                          alt="Foto especial"
+                          className="w-full h-64 object-cover rounded-lg shadow-md"
+                          style={{
+                            animation: 'fadeInScale 0.8s ease-out',
+                          }}
+                        />
+                      ) : (
+                        <div className="text-center text-gray-400">
+                          <p className="text-sm">Sube tu foto especial</p>
+                          <p className="text-xs mt-2">desde /content</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Placeholder para la foto */}
+                  <div className="w-80 h-72 rounded-2xl" />
+                </div>
+
+                {/* Dedicatoria final */}
+                <div className="text-center mt-4 px-4">
+                  <p
+                    className="text-lg text-rosa-pastel leading-relaxed"
+                    style={{ fontFamily: 'Allura, cursive', fontSize: '1.3rem', letterSpacing: '0.5px' }}
+                  >
+                    {dedication || 'Para la mujer que hace mi vida completa. Te amo hoy, mañana y siempre. 💕'}
+                  </p>
+                </div>
+              </div>
             ) : (
               <div className="w-full">
                 <h2 className="text-3xl font-bold text-rosa-pastel mb-6 text-center" style={{ fontFamily: 'Tangerine, cursive', fontWeight: 700 }}>
-                  {currentPage.title}
+                  {(currentPage as any).title}
                 </h2>
                 <p
                   className="text-gray-700 leading-relaxed text-justify whitespace-pre-wrap text-base md:text-lg"
                   style={{ fontFamily: 'Allura, cursive', letterSpacing: '0.5px', lineHeight: '1.8' }}
                 >
-                  {currentPage.content}
+                  {(currentPage as any).content}
                 </p>
               </div>
             )}
@@ -164,6 +220,14 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
                 <p className="text-lg font-semibold text-celeste-romantic" style={{ fontFamily: 'Tangerine, cursive', fontSize: '2rem' }}>
                   Una historia de amor eterno
                 </p>
+              </div>
+            ) : (currentPage as any).isPhotoPage ? (
+              <div className="text-center space-y-4">
+                <div className="text-6xl">💑</div>
+                <p className="text-gray-700 italic text-sm md:text-base" style={{ fontFamily: 'Allura, cursive', fontSize: '1.1rem' }}>
+                  "Nuestro amor es la más hermosa historia jamás contada"
+                </p>
+                <div className="text-5xl mt-6">✨</div>
               </div>
             ) : (
               <div className="text-center space-y-4">
@@ -191,14 +255,14 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
           {/* Indicador de Página */}
           <div className="text-center min-w-[100px] bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
             <p className="text-sm font-semibold text-white drop-shadow-lg">
-              {currentPageIndex + 1} / {BOOK_PAGES.length}
+              {currentPageIndex + 1} / {bookPages.length}
             </p>
           </div>
 
           {/* Botón Siguiente */}
           <button
             onClick={handleNextPage}
-            disabled={currentPageIndex === BOOK_PAGES.length - 1}
+            disabled={currentPageIndex === bookPages.length - 1}
             className="p-2 rounded-full bg-celeste-romantic/80 hover:bg-celeste-romantic disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg"
           >
             <ChevronRight className="w-6 h-6 text-white" />
