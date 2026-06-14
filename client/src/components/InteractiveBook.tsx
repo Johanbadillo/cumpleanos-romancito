@@ -1,10 +1,9 @@
 /**
- * Componente InteractiveBook - Versión Simplificada
- * Solo portada y páginas con fondo difuminado
- * Sin mensajes de instrucciones ni fondo blanco
+ * Componente InteractiveBook - Con Sonido y Fuente Elegante
+ * Sonido realista de página girada + Fuente cursiva elegante
  */
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 interface InteractiveBookProps {
@@ -75,16 +74,28 @@ Y si miras al cielo en las noches claras, podrás ver su luz brillando entre las
 
 export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProps) {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const currentPage = BOOK_PAGES[currentPageIndex];
+
+  const playPageTurnSound = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {
+        // Silenciar error si el navegador no permite reproducción automática
+      });
+    }
+  };
 
   const handleNextPage = () => {
     if (currentPageIndex < BOOK_PAGES.length - 1) {
+      playPageTurnSound();
       setCurrentPageIndex(currentPageIndex + 1);
     }
   };
 
   const handlePrevPage = () => {
     if (currentPageIndex > 0) {
+      playPageTurnSound();
       setCurrentPageIndex(currentPageIndex - 1);
     }
   };
@@ -98,7 +109,14 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      {/* Modal del Libro - Solo contenido, sin fondo blanco */}
+      {/* Audio para sonido de página */}
+      <audio
+        ref={audioRef}
+        src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"
+        preload="auto"
+      />
+
+      {/* Modal del Libro */}
       <div className="relative w-full max-w-5xl h-[600px] rounded-2xl shadow-2xl overflow-hidden">
         {/* Botón Cerrar */}
         <button
@@ -125,8 +143,13 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
               </div>
             ) : (
               <div className="w-full">
-                <h2 className="text-2xl font-bold text-rosa-pastel mb-6 text-center">{currentPage.title}</h2>
-                <p className="text-gray-700 leading-relaxed text-justify whitespace-pre-wrap text-sm md:text-base">
+                <h2 className="text-3xl font-bold text-rosa-pastel mb-6 text-center" style={{ fontFamily: 'Tangerine, cursive', fontWeight: 700 }}>
+                  {currentPage.title}
+                </h2>
+                <p
+                  className="text-gray-700 leading-relaxed text-justify whitespace-pre-wrap text-base md:text-lg"
+                  style={{ fontFamily: 'Allura, cursive', letterSpacing: '0.5px', lineHeight: '1.8' }}
+                >
                   {currentPage.content}
                 </p>
               </div>
@@ -138,14 +161,14 @@ export default function InteractiveBook({ isOpen, onClose }: InteractiveBookProp
             {currentPageIndex === 0 ? (
               <div className="text-center space-y-6">
                 <div className="text-7xl animate-bounce">💕</div>
-                <p className="text-lg font-semibold text-celeste-romantic">
+                <p className="text-lg font-semibold text-celeste-romantic" style={{ fontFamily: 'Tangerine, cursive', fontSize: '2rem' }}>
                   Una historia de amor eterno
                 </p>
               </div>
             ) : (
               <div className="text-center space-y-4">
                 <div className="text-6xl">✨</div>
-                <p className="text-gray-700 italic text-sm md:text-base">
+                <p className="text-gray-700 italic text-sm md:text-base" style={{ fontFamily: 'Allura, cursive', fontSize: '1.1rem' }}>
                   "El verdadero amor es lo más valioso que existe"
                 </p>
                 <div className="text-5xl mt-6">🌹</div>
