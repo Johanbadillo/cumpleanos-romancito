@@ -333,7 +333,12 @@ export default function Home() {
       </div>
 
       {/* Libro Interactivo Modal */}
-      <InteractiveBook isOpen={showBook} onClose={() => setShowBook(false)} />
+      <InteractiveBook 
+        isOpen={showBook} 
+        onClose={() => setShowBook(false)}
+        photoUrl="/manus-storage/WhatsAppImage2026-06-14at3.56.15PM_3db50c1f.jpeg"
+        dedication="Para la mujer que hace mi vida completa. Eres mi luz, mi inspiración y mi razón de sonreír cada día. Te amo infinitamente. 💕✨"
+      />
 
       {/* Pie de página elegante */}
       <Footer 
