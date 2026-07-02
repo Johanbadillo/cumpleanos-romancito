@@ -4,7 +4,7 @@
  * Última página con marco para foto y dedicatoria
  */
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 interface InteractiveBookProps {
@@ -77,7 +77,9 @@ Y si miras al cielo en las noches claras, podrás ver su luz brillando entre las
 
 export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication }: InteractiveBookProps) {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const audioRef = useRef<HTMLAudioElement>(null);
+  const petalsRef = useRef<(HTMLDivElement | null)[]>([]);
   
   // Agregar página de foto dinámicamente si se proporciona
   const bookPages = photoUrl ? [
@@ -124,6 +126,43 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
   // Mostrar pétalos solo en la última página
   const isPhotoPage = currentPageIndex === bookPages.length - 1;
 
+  // Detectar movimiento del ratón para interactividad de pétalos
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+      
+      // Mover pétalos alejándose del cursor
+      petalsRef.current.forEach((petal) => {
+        if (!petal) return;
+        
+        const rect = petal.getBoundingClientRect();
+        const petalX = rect.left + rect.width / 2;
+        const petalY = rect.top + rect.height / 2;
+        
+        const dx = petalX - e.clientX;
+        const dy = petalY - e.clientY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Si el cursor está cerca (100px), apartar el pétalo
+        if (distance < 100) {
+          const angle = Math.atan2(dy, dx);
+          const force = (100 - distance) / 100;
+          const moveX = Math.cos(angle) * force * 50;
+          const moveY = Math.sin(angle) * force * 50;
+          
+          petal.style.transform = `translate(${moveX}px, ${moveY}px)`;
+        } else {
+          petal.style.transform = 'translate(0, 0)';
+        }
+      });
+    };
+    
+    if (isPhotoPage) {
+      window.addEventListener('mousemove', handleMouseMove);
+      return () => window.removeEventListener('mousemove', handleMouseMove);
+    }
+  }, [isPhotoPage]);
+
   if (!isOpen) return null;
 
   return (
@@ -134,7 +173,10 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           {[...Array(20)].map((_, i) => (
             <div
               key={`petal-${i}`}
-              className="absolute text-rosa-pastel text-2xl"
+              ref={(el) => {
+                if (el) petalsRef.current[i] = el;
+              }}
+              className="absolute text-rosa-pastel text-2xl transition-transform duration-100 ease-out"
               style={{
                 animation: `fallingPetal ${3 + Math.random() * 2}s linear infinite`,
                 left: `${Math.random() * 100}%`,
