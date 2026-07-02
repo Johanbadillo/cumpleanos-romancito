@@ -139,6 +139,42 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
         preload="auto"
       />
 
+      {/* Mini Cinnamorrolls en los bordes */}
+      {[...Array(4)].map((_, i) => {
+        const positions = [
+          { top: '10%', left: '-40px' },
+          { top: '50%', right: '-40px', transform: 'translateY(-50%)' },
+          { bottom: '10%', left: '-40px' },
+          { bottom: '10%', right: '-40px' },
+        ];
+        const isClicked = clickedCinnamorrolls.has(i);
+        
+        const handleClick = () => {
+          const newSet = new Set(clickedCinnamorrolls);
+          newSet.add(i);
+          setClickedCinnamorrolls(newSet);
+          // Reproducir audio de feliz cumpleaños
+          const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3');
+          audio.play().catch(() => {});
+        };
+        
+        return (
+          <div
+            key={`cinnamoroll-${i}`}
+            onClick={handleClick}
+            className="fixed text-5xl cursor-pointer transition-all duration-500 z-40"
+            style={{
+              ...positions[i],
+              opacity: isClicked ? 0 : 1,
+              transform: isClicked ? `${positions[i].transform || ''} scale(0)` : positions[i].transform || 'scale(1)',
+              pointerEvents: isClicked ? 'none' : 'auto',
+            }}
+          >
+            {!isClicked && '🐰'}
+          </div>
+        );
+      })}
+
       {/* Modal del Libro */}
       <div className="relative w-full max-w-5xl h-[600px] rounded-2xl shadow-2xl overflow-hidden" style={{
         animation: 'bookOpen 0.8s ease-out',
