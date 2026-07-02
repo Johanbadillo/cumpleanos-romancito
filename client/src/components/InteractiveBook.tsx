@@ -77,9 +77,8 @@ Y si miras al cielo en las noches claras, podrás ver su luz brillando entre las
 
 export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication }: InteractiveBookProps) {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const audioRef = useRef<HTMLAudioElement>(null);
-  const petalsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [clickedCinnamorrolls, setClickedCinnamorrolls] = useState<Set<number>>(new Set());
   
   // Agregar página de foto dinámicamente si se proporciona
   const bookPages = photoUrl ? [
@@ -126,70 +125,13 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
   // Mostrar pétalos solo en la última página
   const isPhotoPage = currentPageIndex === bookPages.length - 1;
 
-  // Detectar movimiento del ratón para interactividad de pétalos
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-      
-      // Mover pétalos alejándose del cursor
-      petalsRef.current.forEach((petal) => {
-        if (!petal) return;
-        
-        const rect = petal.getBoundingClientRect();
-        const petalX = rect.left + rect.width / 2;
-        const petalY = rect.top + rect.height / 2;
-        
-        const dx = petalX - e.clientX;
-        const dy = petalY - e.clientY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        // Si el cursor está cerca (100px), apartar el pétalo
-        if (distance < 100) {
-          const angle = Math.atan2(dy, dx);
-          const force = (100 - distance) / 100;
-          const moveX = Math.cos(angle) * force * 50;
-          const moveY = Math.sin(angle) * force * 50;
-          
-          petal.style.transform = `translate(${moveX}px, ${moveY}px)`;
-        } else {
-          petal.style.transform = 'translate(0, 0)';
-        }
-      });
-    };
-    
-    if (isPhotoPage) {
-      window.addEventListener('mousemove', handleMouseMove);
-      return () => window.removeEventListener('mousemove', handleMouseMove);
-    }
-  }, [isPhotoPage]);
+
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      {/* Pétalos de rosa cayendo en la última página */}
-      {isPhotoPage && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={`petal-${i}`}
-              ref={(el) => {
-                if (el) petalsRef.current[i] = el;
-              }}
-              className="absolute text-rosa-pastel text-2xl transition-transform duration-100 ease-out"
-              style={{
-                animation: `fallingPetal ${3 + Math.random() * 2}s linear infinite`,
-                left: `${Math.random() * 100}%`,
-                top: `-20px`,
-                opacity: 0.7 + Math.random() * 0.3,
-                animationDelay: `${Math.random() * 2}s`,
-              }}
-            >
-              🌹
-            </div>
-          ))}
-        </div>
-      )}
+
       {/* Audio para sonido de página */}
       <audio
         ref={audioRef}
@@ -198,7 +140,9 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
       />
 
       {/* Modal del Libro */}
-      <div className="relative w-full max-w-5xl h-[600px] rounded-2xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-5xl h-[600px] rounded-2xl shadow-2xl overflow-hidden" style={{
+        animation: 'bookOpen 0.8s ease-out',
+      }}>
         {/* Botón Cerrar */}
         <button
           onClick={handleClose}
@@ -387,17 +331,17 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
             }
           }
           
-          @keyframes fallingPetal {
+          @keyframes bookOpen {
             0% {
-              transform: translateY(0) rotate(0deg);
-              opacity: 1;
+              transform: scaleX(0) rotateY(90deg);
+              opacity: 0;
             }
             50% {
-              transform: translateX(30px) rotate(180deg);
+              transform: scaleX(0.5) rotateY(45deg);
             }
             100% {
-              transform: translateY(100vh) rotate(360deg);
-              opacity: 0;
+              transform: scaleX(1) rotateY(0deg);
+              opacity: 1;
             }
           }
         `}</style>
