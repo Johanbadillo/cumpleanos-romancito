@@ -114,8 +114,32 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
 
   if (!isOpen) return null;
 
+  // Generar corazones flotantes
+  const floatingHearts = Array.from({ length: 8 }, (_, i) => ({
+    id: i,
+    left: Math.random() * 100,
+    delay: Math.random() * 0.5,
+    duration: 3 + Math.random() * 2,
+  }));
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
+      {/* Corazones flotantes */}
+      {floatingHearts.map((heart) => (
+        <div
+          key={`heart-${heart.id}`}
+          className="fixed text-2xl pointer-events-none"
+          style={{
+            left: `${heart.left}%`,
+            top: '-30px',
+            animation: `floatUp ${heart.duration}s ease-in forwards`,
+            animationDelay: `${heart.delay}s`,
+            opacity: 0.6,
+          }}
+        >
+          💕
+        </div>
+      ))}
 
       {/* Audio para sonido de página */}
       <audio
@@ -247,6 +271,21 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
             100% {
               transform: scaleX(1) rotateY(0deg);
               opacity: 1;
+            }
+          }
+          
+          @keyframes floatUp {
+            0% {
+              transform: translateY(0) rotate(0deg);
+              opacity: 0.6;
+            }
+            50% {
+              transform: translateY(-200px) rotate(10deg);
+              opacity: 0.8;
+            }
+            100% {
+              transform: translateY(-400px) rotate(20deg);
+              opacity: 0;
             }
           }
         `}</style>
