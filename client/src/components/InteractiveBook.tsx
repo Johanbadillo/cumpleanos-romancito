@@ -4,7 +4,7 @@
  * Última página con marco para foto y dedicatoria
  */
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
 interface InteractiveBookProps {
@@ -16,51 +16,42 @@ interface InteractiveBookProps {
 
 const BOOK_PAGES = [
   {
-    id: 'cover',
+    id: 'page1',
     title: 'El Principito y la Rosa',
     subtitle: 'Una Historia de Amor Eterno',
-    isCover: true,
-    content: '',
-  },
-  {
-    id: 'page1',
-    title: 'Capítulo I: El Encuentro',
-    content: `En un pequeño planeta lejano, bajo un cielo de estrellas infinitas, vivía un principito que buscaba el verdadero significado del amor. Un día, descubrió una rosa extraordinaria que brillaba con luz propia.
+    content: `Érase una vez un pequeño príncipe que viajaba por el universo en busca de respuestas. En su planeta encontró una rosa única, diferente a todas las demás.
 
-"¿Quién eres?", preguntó el principito con admiración.
+La rosa era hermosa, pero también frágil. El principito la cuidaba cada día, protegiéndola del viento y dándole agua con su corazón.
 
-"Soy la rosa que ha estado esperando por ti", respondió ella con dulzura. "He esperado mil años para que llegaras."
-
-En ese momento, el principito supo que había encontrado lo que su corazón buscaba.`,
+"Eres mi rosa especial", le decía cada mañana, y ella sonreía en silencio.`,
   },
   {
     id: 'page2',
-    title: 'Capítulo II: El Cuidado',
-    content: `Cada día, el principito cuidaba a su rosa con infinito amor. Le traía agua de las fuentes más puras, la protegía del viento frío y le susurraba historias de mundos lejanos.
+    title: 'El Viaje',
+    content: `El principito decidió viajar por otros planetas para entender mejor el universo. Pero cada noche, miraba hacia su planeta y pensaba en su rosa.
 
-La rosa, a su vez, lo amaba con toda la profundidad de su ser. Sus pétalos se abrían cada mañana solo para verlo, y su fragancia era la más dulce del universo.
+"¿Estará bien sin mí?", se preguntaba.
 
-"Tu amor me hace florecer cada día", decía la rosa. "Eres mi razón de existir."`,
+Conoció a muchas personas, visitó lugares maravillosos, pero nada comparaba con el brillo de los ojos de su rosa cuando lo veía regresar.`,
   },
   {
     id: 'page3',
-    title: 'Capítulo III: El Viaje',
-    content: `Juntos, viajaron por galaxias desconocidas, visitando planetas mágicos y conociendo criaturas maravillosas. En cada lugar, su amor crecía más fuerte.
+    title: 'El Descubrimiento',
+    content: `Un día, el principito comprendió algo importante: no es la belleza de la rosa lo que la hace especial, sino el amor que le dedica.
 
-Bajo lunas plateadas y soles de fuego, bailaban entre las estrellas. El principito llevaba a la rosa en sus brazos, protegiéndola, amándola con cada latido de su corazón.
+"Lo que hace importante a mi rosa es el tiempo que pasé cuidándola", pensó.
 
-"Contigo, cualquier lugar es un paraíso", susurraba el principito.`,
+Esa verdad cambió su forma de ver el mundo. Cada momento con ella era un tesoro infinito.`,
   },
   {
     id: 'page4',
-    title: 'Capítulo IV: La Promesa Eterna',
-    content: `Llegó el momento en que el principito hizo una promesa bajo la lluvia de estrellas:
+    title: 'El Regreso',
+    content: `El principito regresó a su planeta con el corazón lleno de alegría. La rosa lo esperaba, más hermosa que nunca.
 
-"Te amaré por toda la eternidad. Cuando el universo se desvanezca, cuando las estrellas se apaguen, mi amor por ti seguirá brillando. Eres mi razón de ser, mi inspiración, mi hogar."
+Se abrazaron bajo las estrellas, y en ese momento, ambos comprendieron que el amor verdadero trasciende el tiempo y el espacio.
 
-La rosa respondió: "Y yo te amaré en cada vida, en cada universo, en cada momento. Tú eres mi principito, mi amor infinito."
-
-Se besaron bajo el cielo estrellado, y en ese instante, el universo entero se iluminó con su amor.`,
+"Te amo", susurró el principito.
+"Y yo te amo a ti", respondió la rosa con toda su esencia.`,
   },
   {
     id: 'page5',
@@ -78,9 +69,6 @@ Y si miras al cielo en las noches claras, podrás ver su luz brillando entre las
 export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication }: InteractiveBookProps) {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [clickedCinnamorrolls, setClickedCinnamorrolls] = useState<Set<number>>(new Set());
-  const [smokeParticles, setSmokeParticles] = useState<Array<{ id: number; x: number; y: number }>([]);
-  const smokeIdRef = useRef(0);
   
   // Agregar página de foto dinámicamente si se proporciona
   const bookPages = photoUrl ? [
@@ -124,11 +112,6 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
     onClose();
   };
 
-  // Mostrar pétalos solo en la última página
-  const isPhotoPage = currentPageIndex === bookPages.length - 1;
-
-
-
   if (!isOpen) return null;
 
   return (
@@ -140,76 +123,6 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
         src="https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3"
         preload="auto"
       />
-
-      {/* Mini Cinnamorrolls en los bordes */}
-      {Array.from({ length: 4 }, (_, i) => {
-        const positions = [
-          { top: '10%', left: '-40px' },
-          { top: '50%', right: '-40px', transform: 'translateY(-50%)' },
-          { bottom: '10%', left: '-40px' },
-          { bottom: '10%', right: '-40px' },
-        ];
-        const isClicked = clickedCinnamorrolls.has(i);
-        
-        const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          const x = rect.left + rect.width / 2;
-          const y = rect.top + rect.height / 2;
-          
-          // Crear partículas de humo
-          const newParticles: Array<{ id: number; x: number; y: number }> = Array.from({ length: 8 }, () => ({
-            id: smokeIdRef.current++,
-            x: x + (Math.random() - 0.5) * 20,
-            y: y + (Math.random() - 0.5) * 20,
-          }));
-          setSmokeParticles((prev: any) => [...prev, ...newParticles]);
-          
-          // Eliminar partículas después de la animación
-          setTimeout(() => {
-            setSmokeParticles((prev: any) => prev.filter((p: any) => !newParticles.some((np) => np.id === p.id)));
-          }, 600);
-          
-          const newSet = new Set(clickedCinnamorrolls);
-          newSet.add(i);
-          setClickedCinnamorrolls(newSet);
-          // Reproducir audio de feliz cumpleaños
-          const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2570/2570-preview.mp3');
-          audio.play().catch(() => {});
-        };
-        
-        return (
-          <div
-            key={`cinnamoroll-${i}`}
-            onClick={handleClick}
-            className="fixed text-5xl cursor-pointer transition-all duration-500 z-40"
-            style={{
-              ...positions[i],
-              opacity: isClicked ? 0 : 1,
-              transform: isClicked ? `${positions[i].transform || ''} scale(0)` : positions[i].transform || 'scale(1)',
-              pointerEvents: isClicked ? 'none' : 'auto',
-            }}
-          >
-            {!isClicked && '🐰'}
-          </div>
-        );
-      })}
-
-      {/* Partículas de humo */}
-      {smokeParticles.map((particle: any) => (
-        <div
-          key={particle.id}
-          className="fixed rounded-full pointer-events-none"
-          style={{
-            left: `${particle.x}px`,
-            top: `${particle.y}px`,
-            width: '30px',
-            height: '30px',
-            background: 'radial-gradient(circle, rgba(200,200,200,0.8) 0%, rgba(200,200,200,0) 70%)',
-            animation: 'smokeRise 0.6s ease-out forwards',
-            zIndex: 35,
-          }}
-        />
-      ))}
 
       {/* Modal del Libro */}
       <div className="relative w-full max-w-5xl h-[600px] rounded-2xl shadow-2xl overflow-hidden" style={{
@@ -226,115 +139,53 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
         {/* Contenedor del Libro - Dos columnas */}
         <div className="flex h-full">
           {/* Página Izquierda */}
-          <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gradient-to-br from-celeste-romantic/5 to-rosa-pastel/5 overflow-y-auto">
-            {(currentPage as any).isCover ? (
-              <div className="flex flex-col items-center justify-center h-full gap-6">
-                <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310519663692923675/guASUUg4cJC9WiZ2QEx5gQ/stitch-angel-book-cover-Y7shvXVdK9WUeupBTChuGd.webp"
-                  alt="Portada del Libro"
-                  className="w-64 h-80 object-cover rounded-lg shadow-lg"
-                  style={{
-                    animation: 'fadeInScale 0.8s ease-out',
-                  }}
-                />
-              </div>
-            ) : (currentPage as any).isPhotoPage ? (
-              <div className="w-full h-full flex flex-col items-center justify-center gap-6">
-                {/* Marco elegante para la foto */}
-                <div className="relative" style={{
-                  animation: 'floatingFrame 3s ease-in-out infinite',
-                }}>
-                  {/* Efecto de brillo mágico */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 rounded-2xl" style={{
-                    animation: 'magicGlow 3s ease-in-out infinite',
-                    filter: 'blur(8px)',
-                  }} />
-                  
-                  {/* Marco decorativo exterior */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-rosa-pastel to-celeste-romantic rounded-2xl p-6 shadow-lg" style={{ 
-                    transform: 'rotate(0deg)',
-                    boxShadow: '0 0 30px rgba(255, 182, 193, 0.5), 0 0 60px rgba(173, 216, 230, 0.3)',
+          <div className="w-1/2 bg-gradient-to-br from-celeste-romantic/20 to-rosa-pastel/20 p-8 flex flex-col justify-center border-r-2 border-rosa-pastel/30 overflow-y-auto">
+            {(currentPage as any)?.isPhotoPage ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                {photoUrl && (
+                  <div className="relative mb-6" style={{
+                    animation: 'floatingFrame 3s ease-in-out infinite',
                   }}>
-                    {/* Marco interior blanco */}
-                    <div className="bg-white rounded-xl p-4 h-full flex items-center justify-center">
-                      {photoUrl ? (
-                        <img
-                          src={photoUrl}
-                          alt="Foto especial"
-                          className="w-full h-64 object-cover rounded-lg shadow-md"
-                          style={{
-                            animation: 'fadeInScale 0.8s ease-out',
-                          }}
-                        />
-                      ) : (
-                        <div className="text-center text-gray-400">
-                          <p className="text-sm">Sube tu foto especial</p>
-                          <p className="text-xs mt-2">desde /content</p>
-                        </div>
-                      )}
+                    <div className="w-64 h-64 rounded-2xl overflow-hidden shadow-2xl border-4 border-rosa-pastel"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255,182,193,0.3) 0%, rgba(173,216,230,0.3) 100%)',
+                        boxShadow: '0 0 40px rgba(255,182,193,0.4)',
+                      }}
+                    >
+                      <img src={photoUrl} alt="Nuestra foto" className="w-full h-full object-cover" />
                     </div>
                   </div>
-                  
-                  {/* Placeholder para la foto */}
-                  <div className="w-80 h-72 rounded-2xl" />
-                </div>
-
-                {/* Dedicatoria final */}
-                <div className="text-center mt-4 px-4">
-                  <p
-                    className="text-lg text-rosa-pastel leading-relaxed"
-                    style={{ fontFamily: 'Allura, cursive', fontSize: '1.3rem', letterSpacing: '0.5px' }}
-                  >
-                    {dedication || 'Para la mujer que hace mi vida completa. Te amo hoy, mañana y siempre. 💕'}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="w-full">
-                <h2 className="text-3xl font-bold text-rosa-pastel mb-6 text-center" style={{ fontFamily: 'Tangerine, cursive', fontWeight: 700 }}>
-                  {(currentPage as any).title}
-                </h2>
-                <p
-                  className="text-gray-700 leading-relaxed text-justify whitespace-pre-wrap text-base md:text-lg"
-                  style={{ fontFamily: 'Allura, cursive', letterSpacing: '0.5px', lineHeight: '1.8' }}
-                >
-                  {(currentPage as any).content}
+                )}
+                <p className="text-center text-rosa-pastel text-lg font-allura mt-6 max-w-md">
+                  {dedication || 'Para la mujer que hace mi vida completa. Eres mi luz, mi inspiración y mi razón de sonreír cada día. Te amo infinitamente. 💕✨'}
                 </p>
               </div>
+            ) : (
+              <>
+                <h2 className="text-3xl font-tangerine text-rosa-pastel mb-2">{currentPage?.title}</h2>
+                {currentPage?.subtitle && (
+                  <p className="text-lg font-allura text-celeste-romantic mb-6">{currentPage.subtitle}</p>
+                )}
+                <p className="text-sm leading-relaxed font-allura text-gray-700 whitespace-pre-wrap">
+                  {currentPage?.content}
+                </p>
+              </>
             )}
           </div>
 
-          {/* Página Derecha - Decorativa */}
-          <div className="flex-1 hidden md:flex flex-col items-center justify-center p-8 bg-gradient-to-bl from-rosa-pastel/5 to-celeste-romantic/5">
-            {currentPageIndex === 0 ? (
-              <div className="text-center space-y-6">
-                <div className="text-7xl animate-bounce">💕</div>
-                <p className="text-lg font-semibold text-celeste-romantic" style={{ fontFamily: 'Tangerine, cursive', fontSize: '2rem' }}>
-                  Una historia de amor eterno
-                </p>
-              </div>
-            ) : (currentPage as any).isPhotoPage ? (
-              <div className="text-center space-y-4">
-                <div className="text-6xl">💑</div>
-                <p className="text-gray-700 italic text-sm md:text-base" style={{ fontFamily: 'Allura, cursive', fontSize: '1.1rem' }}>
-                  "Nuestro amor es la más hermosa historia jamás contada"
-                </p>
-                <div className="text-5xl mt-6">✨</div>
-              </div>
-            ) : (
-              <div className="text-center space-y-4">
-                <div className="text-6xl">✨</div>
-                <p className="text-gray-700 italic text-sm md:text-base" style={{ fontFamily: 'Allura, cursive', fontSize: '1.1rem' }}>
-                  "El verdadero amor es lo más valioso que existe"
-                </p>
-                <div className="text-5xl mt-6">🌹</div>
-              </div>
-            )}
+          {/* Página Derecha */}
+          <div className="w-1/2 bg-gradient-to-br from-rosa-pastel/20 to-celeste-romantic/20 p-8 flex flex-col justify-center border-l-2 border-celeste-romantic/30 overflow-y-auto">
+            <div className="text-center">
+              <p className="text-sm text-gray-500 mb-4">Página {currentPageIndex + 1} de {bookPages.length}</p>
+              <div className="w-full h-1 bg-gradient-to-r from-rosa-pastel via-celeste-romantic to-rosa-pastel rounded-full mb-6" style={{
+                width: `${((currentPageIndex + 1) / bookPages.length) * 100}%`,
+              }} />
+            </div>
           </div>
         </div>
 
         {/* Controles de Navegación */}
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-4 z-20">
+        <div className="absolute bottom-4 left-0 right-0 flex justify-between items-center px-8">
           {/* Botón Anterior */}
           <button
             onClick={handlePrevPage}
@@ -343,13 +194,6 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           >
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
-
-          {/* Indicador de Página */}
-          <div className="text-center min-w-[100px] bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-            <p className="text-sm font-semibold text-white drop-shadow-lg">
-              {currentPageIndex + 1} / {bookPages.length}
-            </p>
-          </div>
 
           {/* Botón Siguiente */}
           <button
@@ -383,23 +227,12 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
             }
           }
           
-          @keyframes magicGlow {
+          @keyframes glowEffect {
             0%, 100% {
-              opacity: 0;
-              transform: translateX(-100%);
+              box-shadow: 0 0 20px rgba(255, 182, 193, 0.4);
             }
             50% {
-              opacity: 0.6;
-              transform: translateX(100%);
-            }
-          }
-          
-          @keyframes shimmer {
-            0% {
-              background-position: -1000px 0;
-            }
-            100% {
-              background-position: 1000px 0;
+              box-shadow: 0 0 40px rgba(255, 182, 193, 0.8);
             }
           }
           
@@ -414,17 +247,6 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
             100% {
               transform: scaleX(1) rotateY(0deg);
               opacity: 1;
-            }
-          }
-          
-          @keyframes smokeRise {
-            0% {
-              transform: translateY(0) scale(1);
-              opacity: 1;
-            }
-            100% {
-              transform: translateY(-80px) scale(1.5);
-              opacity: 0;
             }
           }
         `}</style>
