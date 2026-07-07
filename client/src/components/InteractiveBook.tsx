@@ -79,6 +79,8 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [clickedCinnamorrolls, setClickedCinnamorrolls] = useState<Set<number>>(new Set());
+  const [smokeParticles, setSmokeParticles] = useState<Array<{ id: number; x: number; y: number }>([]);
+  const smokeIdRef = useRef(0);
   
   // Agregar página de foto dinámicamente si se proporciona
   const bookPages = photoUrl ? [
@@ -140,7 +142,7 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
       />
 
       {/* Mini Cinnamorrolls en los bordes */}
-      {[...Array(4)].map((_, i) => {
+      {Array.from({ length: 4 }, (_, i) => {
         const positions = [
           { top: '10%', left: '-40px' },
           { top: '50%', right: '-40px', transform: 'translateY(-50%)' },
@@ -149,7 +151,24 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
         ];
         const isClicked = clickedCinnamorrolls.has(i);
         
-        const handleClick = () => {
+        const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+          const rect = e.currentTarget.getBoundingClientRect();
+          const x = rect.left + rect.width / 2;
+          const y = rect.top + rect.height / 2;
+          
+          // Crear partículas de humo
+          const newParticles: Array<{ id: number; x: number; y: number }> = Array.from({ length: 8 }, () => ({
+            id: smokeIdRef.current++,
+            x: x + (Math.random() - 0.5) * 20,
+            y: y + (Math.random() - 0.5) * 20,
+          }));
+          setSmokeParticles((prev: any) => [...prev, ...newParticles]);
+          
+          // Eliminar partículas después de la animación
+          setTimeout(() => {
+            setSmokeParticles((prev: any) => prev.filter((p: any) => !newParticles.some((np) => np.id === p.id)));
+          }, 600);
+          
           const newSet = new Set(clickedCinnamorrolls);
           newSet.add(i);
           setClickedCinnamorrolls(newSet);
@@ -174,6 +193,23 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           </div>
         );
       })}
+
+      {/* Partículas de humo */}
+      {smokeParticles.map((particle: any) => (
+        <div
+          key={particle.id}
+          className="fixed rounded-full pointer-events-none"
+          style={{
+            left: `${particle.x}px`,
+            top: `${particle.y}px`,
+            width: '30px',
+            height: '30px',
+            background: 'radial-gradient(circle, rgba(200,200,200,0.8) 0%, rgba(200,200,200,0) 70%)',
+            animation: 'smokeRise 0.6s ease-out forwards',
+            zIndex: 35,
+          }}
+        />
+      ))}
 
       {/* Modal del Libro */}
       <div className="relative w-full max-w-5xl h-[600px] rounded-2xl shadow-2xl overflow-hidden" style={{
@@ -378,6 +414,17 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
             100% {
               transform: scaleX(1) rotateY(0deg);
               opacity: 1;
+            }
+          }
+          
+          @keyframes smokeRise {
+            0% {
+              transform: translateY(0) scale(1);
+              opacity: 1;
+            }
+            100% {
+              transform: translateY(-80px) scale(1.5);
+              opacity: 0;
             }
           }
         `}</style>
