@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Cinnamoroll3D from './Cinnamoroll3D';
+import { useAchievementSystem, AchievementNotifications } from './AchievementSystem';
 
 interface InteractiveBookProps {
   isOpen: boolean;
@@ -67,6 +68,7 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
   const [cinnamorollPos, setCinnamorollPos] = useState({ x: 50, y: 50 });
   const [cinnamorollAnimation, setCinnamorollAnimation] = useState<'walk' | 'float' | 'eat' | 'spin' | 'ears'>('float');
   const [isMoving, setIsMoving] = useState(false);
+  const { achievements, notifications, trackFunctionUsed, trackLastPageReached } = useAchievementSystem();
   
   const bookPages = photoUrl ? [
     ...BOOK_PAGES,
@@ -91,7 +93,13 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
   const handleNextPage = () => {
     if (currentPageIndex < bookPages.length - 1) {
       playPageTurnSound();
-      setCurrentPageIndex(currentPageIndex + 1);
+      const nextIndex = currentPageIndex + 1;
+      setCurrentPageIndex(nextIndex);
+      
+      // Verificar si es la última página
+      if (nextIndex === bookPages.length - 1) {
+        trackLastPageReached();
+      }
     }
   };
 
@@ -239,7 +247,7 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           {/* Página Derecha - Blanca con Cinnamoroll */}
           <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center border-l-2 border-celeste-romantic/30 overflow-y-auto relative">
             {currentPageIndex === bookPages.length - 1 ? (
-              <Cinnamoroll3D onKeyPress={handleKeyPress} />
+              <Cinnamoroll3D onKeyPress={handleKeyPress} onFunctionUsed={trackFunctionUsed} />
             ) : (
               <div className="text-center">
                 <p className="text-sm text-gray-500 mb-4">Página {currentPageIndex + 1} de {bookPages.length}</p>
@@ -354,6 +362,9 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
             50% { transform: translateY(-20px); }
           }
         `}</style>
+      
+      {/* Sistema de Logros */}
+      <AchievementNotifications notifications={notifications} />
       </div>
     </div>
   );
