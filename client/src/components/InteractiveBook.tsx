@@ -64,6 +64,9 @@ Y si miras al cielo en las noches claras, podrás ver su luz brillando entre las
 export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication }: InteractiveBookProps) {
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [cinnamorollPos, setCinnamorollPos] = useState({ x: 50, y: 50 });
+  const [cinnamorollAnimation, setCinnamorollAnimation] = useState<'walk' | 'float' | 'eat' | 'spin' | 'ears'>('float');
+  const [isMoving, setIsMoving] = useState(false);
   
   const bookPages = photoUrl ? [
     ...BOOK_PAGES,
@@ -104,9 +107,47 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
     onClose();
   };
 
-  const handleKeyPress = (key: string) => {
-    // Manejo de teclas para Cinnamoroll
-    // Las animaciones se manejan dentro del componente Cinnamoroll3D
+  const handleCinnamorollClick = () => {
+    setCinnamorollAnimation('ears');
+    setTimeout(() => setCinnamorollAnimation('float'), 600);
+  };
+
+  const handlePageClick = (e: any) => {
+    if (currentPageIndex !== bookPages.length - 1) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = ((e.clientX - rect.left) / rect.width) * 100;
+    const clickY = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    setIsMoving(true);
+    setCinnamorollAnimation('walk');
+    
+    const startX = cinnamorollPos.x;
+    const startY = cinnamorollPos.y;
+    const distance = Math.sqrt((clickX - startX) ** 2 + (clickY - startY) ** 2);
+    const duration = Math.min(distance * 10, 2000);
+    
+    const startTime = Date.now();
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      setCinnamorollPos({
+        x: startX + (clickX - startX) * progress,
+        y: startY + (clickY - startY) * progress,
+      });
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setIsMoving(false);
+        const animations: any = ['float', 'eat', 'spin'];
+        const randomAnim = animations[Math.floor(Math.random() * animations.length)];
+        setCinnamorollAnimation(randomAnim);
+        setTimeout(() => setCinnamorollAnimation('float'), 2000);
+      }
+    };
+    animate();
   };
 
   if (!isOpen) return null;
@@ -154,7 +195,7 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
 
         <div className="flex h-full">
           {/* Página Izquierda - Blanca */}
-          <div className="w-1/2 bg-white p-8 flex flex-col justify-center border-r-2 border-rosa-pastel/30 overflow-y-auto relative">
+          <div className="w-1/2 bg-white p-8 flex flex-col justify-center border-r-2 border-rosa-pastel/30 overflow-y-auto">
             {(currentPage as any)?.isPhotoPage ? (
               <div className="flex flex-col items-center justify-center h-full">
                 {photoUrl && (
@@ -189,12 +230,30 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           </div>
 
           {/* Página Derecha - Blanca con Cinnamoroll */}
-          <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center border-l-2 border-celeste-romantic/30 overflow-y-auto relative">
-            <Cinnamoroll3D onKeyPress={handleKeyPress} />
+          <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center border-l-2 border-celeste-romantic/30 overflow-y-auto relative cursor-pointer" onClick={handlePageClick}>
+            {currentPageIndex === bookPages.length - 1 ? (
+              <div className="relative w-full h-full flex items-center justify-center">
+                <div className="w-full h-full" onClick={handlePageClick}>
+                  <Cinnamoroll3D
+                    onClick={handleCinnamorollClick}
+                    animation={cinnamorollAnimation}
+                    targetPosition={cinnamorollPos}
+                    isMoving={isMoving}
+                  />
+                </div>
+                <p className="absolute bottom-4 text-sm text-gray-500 text-center z-10">Haz clic en mí o en la página</p>
+              </div>
+            ) : (
+              <div className="text-center">
+                <p className="text-sm text-gray-500 mb-4">Página {currentPageIndex + 1} de {bookPages.length}</p>
+                <div className="w-full h-1 bg-gradient-to-r from-rosa-pastel via-celeste-romantic to-rosa-pastel rounded-full mb-6" style={{
+                  width: `${((currentPageIndex + 1) / bookPages.length) * 100}%`,
+                }} />
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Controles de Navegación */}
         <div className="absolute bottom-4 left-0 right-0 flex justify-between items-center px-8">
           <button
             onClick={handlePrevPage}
@@ -270,6 +329,32 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
               transform: translateY(-400px) rotate(20deg);
               opacity: 0;
             }
+          }
+          
+          @keyframes wiggleEars {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+          }
+          
+          @keyframes walk {
+            0%, 100% { transform: translateX(0) scaleX(1); }
+            50% { transform: translateX(10px) scaleX(1); }
+          }
+          
+          @keyframes eat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+          }
+          
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          
+          @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
           }
         `}</style>
       </div>
