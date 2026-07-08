@@ -115,7 +115,7 @@ function CinnamorollModel({ onKeyPress }: Cinnamoroll3DProps) {
 
   return (
     <group ref={group}>
-      {model && <primitive object={model} scale={0.08} />}
+      {model && <primitive object={model} scale={0.25} />}
     </group>
   );
 }
