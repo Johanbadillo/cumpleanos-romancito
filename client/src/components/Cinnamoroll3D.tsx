@@ -189,36 +189,34 @@ export default function Cinnamoroll3D(props: Cinnamoroll3DProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      <Canvas
-        ref={canvasRef}
-        style={{ width: '100%', height: '100%' }}
-        camera={{ position: [0, 0, 2.5], fov: 50 }}
-        onClick={(e) => {
-          const model = e.target as any;
-          if (model?.click) model.click(e);
-        }}
-      >
+    <Canvas
+      ref={canvasRef}
+      style={{ width: '100%', height: '100%' }}
+      camera={{ position: [0, 0, 2.5], fov: 50 }}
+      onClick={(e) => {
+        const model = e.target as any;
+        if (model?.click) model.click(e);
+      }}
+    >
         <ambientLight intensity={1.2} />
         <directionalLight position={[5, 5, 5]} intensity={0.8} />
         <pointLight position={[-5, -5, 5]} intensity={0.4} color="#ffb6c1" />
         
         <CinnamorollModel {...props} />
 
-        {/* Zanahorias */}
-        {carrots.map((carrot) => (
-          <group key={carrot.id} position={[carrot.x, carrot.y, 0]}>
-            <mesh>
-              <coneGeometry args={[0.15, 0.5, 8]} />
-              <meshStandardMaterial color="#ff8c00" />
-            </mesh>
-            <mesh position={[0, 0.3, 0]}>
-              <boxGeometry args={[0.08, 0.2, 0.08]} />
-              <meshStandardMaterial color="#228b22" />
-            </mesh>
-          </group>
-        ))}
-      </Canvas>
-    </div>
+      {/* Zanahorias */}
+      {carrots.map((carrot) => (
+        <group key={carrot.id} position={[carrot.x, carrot.y, 0]}>
+          <mesh>
+            <coneGeometry args={[0.15, 0.5, 8]} />
+            <meshStandardMaterial color="#ff8c00" />
+          </mesh>
+          <mesh position={[0, 0.3, 0]}>
+            <boxGeometry args={[0.08, 0.2, 0.08]} />
+            <meshStandardMaterial color="#228b22" />
+          </mesh>
+        </group>
+      ))}
+    </Canvas>
   );
 }
