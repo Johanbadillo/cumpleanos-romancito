@@ -67,7 +67,8 @@ function CinnamorollModel({ onClick, animation, targetPosition, isMoving }: Cinn
         break;
 
       case 'spin':
-        group.current.rotation.z += 0.1;
+        // Vuelta de ballet - rotación alrededor del eje Y (vertical)
+        group.current.rotation.y += 0.08;
         break;
 
       case 'ears':
@@ -88,7 +89,7 @@ function CinnamorollModel({ onClick, animation, targetPosition, isMoving }: Cinn
         document.body.style.cursor = 'default';
       }}
     >
-      {model && <primitive object={model} scale={0.8} />}
+      {model && <primitive object={model} scale={0.25} />}
     </group>
   );
 }
@@ -97,7 +98,7 @@ export default function Cinnamoroll3D(props: Cinnamoroll3DProps) {
   return (
     <Canvas
       style={{ width: '100%', height: '100%' }}
-      camera={{ position: [0, 0, 3], fov: 50 }}
+      camera={{ position: [0, 0, 2], fov: 50 }}
     >
       <ambientLight intensity={1.2} />
       <directionalLight position={[5, 5, 5]} intensity={0.8} />
