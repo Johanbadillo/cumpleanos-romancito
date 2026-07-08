@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import Cinnamoroll3D from './Cinnamoroll3D';
 
 interface InteractiveBookProps {
   isOpen: boolean;
@@ -232,29 +233,15 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center border-l-2 border-celeste-romantic/30 overflow-y-auto relative cursor-pointer" onClick={handlePageClick}>
             {currentPageIndex === bookPages.length - 1 ? (
               <div className="relative w-full h-full flex items-center justify-center">
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCinnamorollClick();
-                  }}
-                  className="relative cursor-pointer select-none"
-                  style={{
-                    left: `${cinnamorollPos.x - 50}%`,
-                    top: `${cinnamorollPos.y - 50}%`,
-                    transition: isMoving ? 'none' : 'all 0.3s ease-out',
-                  }}
-                >
-                  <div className="text-8xl" style={{
-                    animation: cinnamorollAnimation === 'ears' ? 'wiggleEars 0.6s ease-in-out' : 
-                               cinnamorollAnimation === 'walk' ? 'walk 0.6s ease-in-out infinite' :
-                               cinnamorollAnimation === 'eat' ? 'eat 1s ease-in-out infinite' :
-                               cinnamorollAnimation === 'spin' ? 'spin 1s linear infinite' :
-                               'float 3s ease-in-out infinite',
-                  }}>
-                    🐰
-                  </div>
+                <div className="w-full h-full" onClick={handlePageClick}>
+                  <Cinnamoroll3D
+                    onClick={handleCinnamorollClick}
+                    animation={cinnamorollAnimation}
+                    targetPosition={cinnamorollPos}
+                    isMoving={isMoving}
+                  />
                 </div>
-                <p className="absolute bottom-4 text-sm text-gray-500 text-center">Haz clic en mí o en la página</p>
+                <p className="absolute bottom-4 text-sm text-gray-500 text-center z-10">Haz clic en mí o en la página</p>
               </div>
             ) : (
               <div className="text-center">
