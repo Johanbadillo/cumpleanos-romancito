@@ -1,23 +1,23 @@
 import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, PerspectiveCamera } from '@react-three/drei';
+import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface Cinnamoroll3DProps {
-  onClick: () => void;
-  animation: 'walk' | 'float' | 'eat' | 'spin' | 'ears';
-  targetPosition?: { x: number; y: number };
-  isMoving?: boolean;
+  onKeyPress?: (key: string) => void;
 }
 
-function CinnamorollModel({ onClick, animation, targetPosition, isMoving }: Cinnamoroll3DProps) {
+function CinnamorollModel({ onKeyPress }: Cinnamoroll3DProps) {
   const group = useRef<THREE.Group>(null);
   const { scene } = useGLTF('/scene.gltf');
   const [model, setModel] = useState<THREE.Group | null>(null);
   const positionRef = useRef({ x: 0, y: 0, z: 0 });
-  const targetPosRef = useRef({ x: 0, y: 0, z: 0 });
+  const velocityRef = useRef({ x: 0, y: 0, z: 0 });
   const rotationRef = useRef(0);
   const timeRef = useRef(0);
+  const [animation, setAnimation] = useState<'float' | 'jump' | 'spin' | 'orbit'>('float');
+  const [isJumping, setIsJumping] = useState(false);
+  const jumpVelocityRef = useRef(0);
 
   useEffect(() => {
     if (scene) {
@@ -27,23 +27,72 @@ function CinnamorollModel({ onClick, animation, targetPosition, isMoving }: Cinn
   }, [scene]);
 
   useEffect(() => {
-    if (targetPosition) {
-      // Convertir posición de pantalla (0-100%) a coordenadas 3D
-      targetPosRef.current.x = (targetPosition.x / 100 - 0.5) * 4;
-      targetPosRef.current.y = (0.5 - targetPosition.y / 100) * 3;
-    }
-  }, [targetPosition]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      
+      if (key === ' ') {
+        e.preventDefault();
+        // Salto
+        if (!isJumping) {
+          setIsJumping(true);
+          jumpVelocityRef.current = 0.15;
+          setAnimation('jump');
+        }
+      } else if (key === 'f') {
+        // Giros flotando libremente
+        e.preventDefault();
+        setAnimation('orbit');
+        // Velocidad aleatoria
+        velocityRef.current.x = (Math.random() - 0.5) * 0.05;
+        velocityRef.current.y = (Math.random() - 0.5) * 0.05;
+      } else if (key === 'c') {
+        // Vueltas de ballet
+        e.preventDefault();
+        setAnimation('spin');
+      }
+      
+      onKeyPress?.(key);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isJumping, onKeyPress]);
 
   useFrame(() => {
     if (!group.current) return;
 
     timeRef.current += 0.016; // ~60fps
 
-    // Movimiento suave hacia la posición objetivo
-    if (isMoving) {
-      const speed = 0.1;
-      positionRef.current.x += (targetPosRef.current.x - positionRef.current.x) * speed;
-      positionRef.current.y += (targetPosRef.current.y - positionRef.current.y) * speed;
+    // Aplicar gravedad y movimiento
+    if (animation === 'orbit') {
+      // Movimiento libre flotante
+      positionRef.current.x += velocityRef.current.x;
+      positionRef.current.y += velocityRef.current.y;
+      positionRef.current.z += velocityRef.current.z;
+
+      // Rebotar en los bordes
+      const boundary = 2;
+      if (Math.abs(positionRef.current.x) > boundary) {
+        velocityRef.current.x *= -1;
+        positionRef.current.x = Math.max(-boundary, Math.min(boundary, positionRef.current.x));
+      }
+      if (Math.abs(positionRef.current.y) > boundary) {
+        velocityRef.current.y *= -1;
+        positionRef.current.y = Math.max(-boundary, Math.min(boundary, positionRef.current.y));
+      }
+    } else if (animation === 'jump') {
+      // Salto
+      jumpVelocityRef.current -= 0.008; // Gravedad
+      positionRef.current.y += jumpVelocityRef.current;
+
+      if (positionRef.current.y <= 0) {
+        positionRef.current.y = 0;
+        setIsJumping(false);
+        setAnimation('float');
+      }
+    } else {
+      // Flotación normal
+      positionRef.current.y = Math.sin(timeRef.current * 2) * 0.1;
     }
 
     group.current.position.set(positionRef.current.x, positionRef.current.y, positionRef.current.z);
@@ -51,28 +100,23 @@ function CinnamorollModel({ onClick, animation, targetPosition, isMoving }: Cinn
     // Aplicar animaciones
     switch (animation) {
       case 'float':
-        group.current.position.y += Math.sin(timeRef.current * 2) * 0.01;
-        group.current.rotation.z = Math.sin(timeRef.current * 1) * 0.1;
+        group.current.rotation.z = Math.sin(timeRef.current * 1) * 0.05;
         break;
 
-      case 'walk':
-        group.current.position.x += Math.sin(timeRef.current * 4) * 0.01;
-        group.current.rotation.z = Math.sin(timeRef.current * 4) * 0.15;
-        group.current.scale.x = Math.cos(timeRef.current * 4) > 0 ? 1 : -1;
-        break;
-
-      case 'eat':
-        group.current.scale.y = 0.95 + Math.sin(timeRef.current * 6) * 0.05;
-        group.current.rotation.x = Math.sin(timeRef.current * 6) * 0.2;
+      case 'jump':
+        group.current.rotation.z = Math.sin(timeRef.current * 8) * 0.2;
+        group.current.scale.y = 0.9 + Math.abs(Math.sin(timeRef.current * 8)) * 0.1;
         break;
 
       case 'spin':
-        // Vuelta de ballet - rotación alrededor del eje Y (vertical)
-        group.current.rotation.y += 0.08;
+        // Vuelta de ballet - rotación alrededor del eje Y
+        group.current.rotation.y += 0.1;
         break;
 
-      case 'ears':
-        group.current.rotation.x = Math.sin(timeRef.current * 10) * 0.3;
+      case 'orbit':
+        // Giros mientras flota
+        group.current.rotation.z += 0.08;
+        group.current.rotation.x = Math.sin(timeRef.current * 2) * 0.3;
         break;
     }
   });
@@ -80,16 +124,14 @@ function CinnamorollModel({ onClick, animation, targetPosition, isMoving }: Cinn
   return (
     <group
       ref={group}
-      onClick={onClick}
-      onPointerOver={(e) => {
-        e.stopPropagation();
+      onPointerOver={() => {
         document.body.style.cursor = 'pointer';
       }}
       onPointerOut={() => {
         document.body.style.cursor = 'default';
       }}
     >
-      {model && <primitive object={model} scale={0.25} />}
+      {model && <primitive object={model} scale={0.15} />}
     </group>
   );
 }
@@ -97,7 +139,7 @@ function CinnamorollModel({ onClick, animation, targetPosition, isMoving }: Cinn
 export default function Cinnamoroll3D(props: Cinnamoroll3DProps) {
   return (
     <Canvas
-      style={{ width: '100%', height: '100%' }}
+      style={{ width: '200px', height: '200px' }}
       camera={{ position: [0, 0, 2], fov: 50 }}
     >
       <ambientLight intensity={1.2} />
