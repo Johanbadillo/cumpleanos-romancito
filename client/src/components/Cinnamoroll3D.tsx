@@ -3,8 +3,44 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
+interface Particle {
+  id: number;
+  position: [number, number, number];
+  velocity: [number, number, number];
+  life: number;
+  maxLife: number;
+}
+
 interface Cinnamoroll3DProps {
   onKeyPress?: (key: string) => void;
+}
+
+function ParticleSystem({ particles }: { particles: Particle[] }) {
+  const pointsRef = useRef<THREE.Points>(null);
+
+  useFrame(() => {
+    if (!pointsRef.current) return;
+
+    const positions = new Float32Array(particles.length * 3);
+    particles.forEach((p, i) => {
+      positions[i * 3] = p.position[0];
+      positions[i * 3 + 1] = p.position[1];
+      positions[i * 3 + 2] = p.position[2];
+    });
+
+    if (pointsRef.current.geometry) {
+      pointsRef.current.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    }
+  });
+
+  return (
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" count={particles.length} array={new Float32Array(particles.length * 3)} itemSize={3} args={[new Float32Array(particles.length * 3), 3]} />
+      </bufferGeometry>
+      <pointsMaterial size={0.1} color="#FFD700" sizeAttenuation />
+    </points>
+  );
 }
 
 function CinnamorollModel({ onKeyPress }: Cinnamoroll3DProps) {
@@ -14,9 +50,12 @@ function CinnamorollModel({ onKeyPress }: Cinnamoroll3DProps) {
   const positionRef = useRef({ x: 0, y: 0, z: 0 });
   const velocityRef = useRef({ x: 0, y: 0, z: 0 });
   const timeRef = useRef(0);
-  const [animation, setAnimation] = useState<'float' | 'jump' | 'spin' | 'orbit' | 'walk'>('float');
+  const [animation, setAnimation] = useState<'float' | 'jump' | 'spin' | 'orbit' | 'walk' | 'bow' | 'dance' | 'eat'>('float');
   const [isJumping, setIsJumping] = useState(false);
   const jumpVelocityRef = useRef(0);
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const particleIdRef = useRef(0);
+  const soundRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
     if (scene) {
@@ -25,27 +64,90 @@ function CinnamorollModel({ onKeyPress }: Cinnamoroll3DProps) {
     }
   }, [scene]);
 
+  const playSound = (type: 'jump' | 'spin' | 'float' | 'bow' | 'dance' | 'eat') => {
+    if (!soundRef.current) return;
+
+    const frequencies: Record<string, number> = {
+      jump: 800,
+      spin: 600,
+      float: 400,
+      bow: 500,
+      dance: 700,
+      eat: 900,
+    };
+
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.value = frequencies[type];
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.3);
+  };
+
+  const createConfetti = () => {
+    const newParticles: Particle[] = [];
+    for (let i = 0; i < 20; i++) {
+      const angle = (Math.PI * 2 * i) / 20;
+      const speed = 0.05 + Math.random() * 0.05;
+      newParticles.push({
+        id: particleIdRef.current++,
+        position: [positionRef.current.x, positionRef.current.y, positionRef.current.z],
+        velocity: [Math.cos(angle) * speed, Math.sin(angle) * speed + 0.02, Math.random() * 0.02],
+        life: 1,
+        maxLife: 1,
+      });
+    }
+    setParticles((prev) => [...prev, ...newParticles]);
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
-      
+
       if (key === ' ') {
         e.preventDefault();
         if (!isJumping) {
           setIsJumping(true);
           jumpVelocityRef.current = 0.15;
           setAnimation('jump');
+          playSound('jump');
         }
       } else if (key === 'f') {
         e.preventDefault();
         setAnimation('orbit');
         velocityRef.current.x = (Math.random() - 0.5) * 0.05;
         velocityRef.current.y = (Math.random() - 0.5) * 0.05;
+        playSound('spin');
+        createConfetti();
       } else if (key === 'c') {
         e.preventDefault();
         setAnimation('spin');
+        playSound('spin');
+        createConfetti();
+      } else if (key === 'r') {
+        e.preventDefault();
+        setAnimation('bow');
+        playSound('bow');
+      } else if (key === 'd') {
+        e.preventDefault();
+        setAnimation('dance');
+        playSound('dance');
+        createConfetti();
+      } else if (key === 'm') {
+        e.preventDefault();
+        setAnimation('eat');
+        playSound('eat');
       }
-      
+
       onKeyPress?.(key);
     };
 
@@ -57,6 +159,22 @@ function CinnamorollModel({ onKeyPress }: Cinnamoroll3DProps) {
     if (!group.current) return;
 
     timeRef.current += 0.016;
+
+    // Actualizar partículas
+    setParticles((prev) =>
+      prev
+        .map((p) => ({
+          ...p,
+          position: [
+            p.position[0] + p.velocity[0],
+            p.position[1] + p.velocity[1],
+            p.position[2] + p.velocity[2],
+          ] as [number, number, number],
+          velocity: [p.velocity[0], p.velocity[1] - 0.001, p.velocity[2]] as [number, number, number],
+          life: p.life - 0.016,
+        }))
+        .filter((p) => p.life > 0)
+    );
 
     // Aplicar movimiento
     if (animation === 'orbit') {
@@ -110,6 +228,21 @@ function CinnamorollModel({ onKeyPress }: Cinnamoroll3DProps) {
       case 'walk':
         group.current.rotation.z = Math.sin(timeRef.current * 8) * 0.15;
         break;
+
+      case 'bow':
+        group.current.rotation.x = Math.sin(timeRef.current * 3) * 0.3;
+        group.current.scale.y = 0.8 + Math.abs(Math.sin(timeRef.current * 3)) * 0.2;
+        break;
+
+      case 'dance':
+        group.current.rotation.z = Math.sin(timeRef.current * 6) * 0.3;
+        group.current.position.x = positionRef.current.x + Math.sin(timeRef.current * 8) * 0.1;
+        break;
+
+      case 'eat':
+        group.current.rotation.x = Math.sin(timeRef.current * 5) * 0.15;
+        group.current.scale.y = 0.95 + Math.abs(Math.sin(timeRef.current * 5)) * 0.05;
+        break;
     }
   });
 
@@ -121,6 +254,8 @@ function CinnamorollModel({ onKeyPress }: Cinnamoroll3DProps) {
 }
 
 export default function Cinnamoroll3D(props: Cinnamoroll3DProps) {
+  const [particles, setParticles] = useState<Particle[]>([]);
+
   return (
     <Canvas
       style={{ width: '100%', height: '100%' }}
@@ -129,8 +264,9 @@ export default function Cinnamoroll3D(props: Cinnamoroll3DProps) {
       <ambientLight intensity={1.2} />
       <directionalLight position={[5, 5, 5]} intensity={0.8} />
       <pointLight position={[-5, -5, 5]} intensity={0.4} color="#ffb6c1" />
-      
+
       <CinnamorollModel {...props} />
+      <ParticleSystem particles={particles} />
     </Canvas>
   );
 }
