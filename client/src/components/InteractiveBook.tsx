@@ -190,14 +190,9 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
 
           {/* Página Derecha - Blanca con Cinnamoroll */}
           <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center border-l-2 border-celeste-romantic/30 overflow-y-auto relative">
-            <div className="flex flex-col items-center justify-center h-full gap-4">
-              <Cinnamoroll3D onKeyPress={handleKeyPress} />
-              
-              <div className="text-center text-xs text-gray-500 mt-4 max-w-xs">
-                <p className="mb-2 font-semibold">Controles:</p>
-                <p>🚀 <span className="font-mono">ESPACIO</span> - Salto</p>
-                <p>🌀 <span className="font-mono">F</span> - Giros flotantes</p>
-                <p>💃 <span className="font-mono">C</span> - Vueltas ballet</p>
+            <div className="w-full h-full flex items-center justify-center">
+              <div style={{ width: '350px', height: '350px' }}>
+                <Cinnamoroll3D onKeyPress={handleKeyPress} />
               </div>
             </div>
           </div>
