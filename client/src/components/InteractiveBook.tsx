@@ -172,7 +172,10 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           style={{
             left: `${heart.left}%`,
             top: '-30px',
-            animation: `floatUp ${heart.duration}s ease-in forwards`,
+            animationName: 'floatUp',
+            animationDuration: `${heart.duration}s`,
+            animationTimingFunction: 'ease-in',
+            animationFillMode: 'forwards',
             animationDelay: `${heart.delay}s`,
             opacity: 0.6,
           }}
