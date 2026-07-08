@@ -1,107 +1,77 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import Cinnamoroll3D from './Cinnamoroll3D';
 
 describe('Cinnamoroll3D Component', () => {
   it('should render without crashing', () => {
-    const mockOnClick = vi.fn();
+    const mockOnKeyPress = vi.fn();
     const { container } = render(
-      <Cinnamoroll3D
-        onClick={mockOnClick}
-        animation="float"
-        targetPosition={{ x: 50, y: 50 }}
-        isMoving={false}
-      />
+      <Cinnamoroll3D onKeyPress={mockOnKeyPress} />
     );
 
     expect(container).toBeTruthy();
   });
 
-  it('should accept different animation types', () => {
-    const mockOnClick = vi.fn();
-    const animations: Array<'walk' | 'float' | 'eat' | 'spin' | 'ears'> = ['walk', 'float', 'eat', 'spin', 'ears'];
-
-    animations.forEach((animation) => {
-      const { container } = render(
-        <Cinnamoroll3D
-          onClick={mockOnClick}
-          animation={animation}
-          targetPosition={{ x: 50, y: 50 }}
-          isMoving={false}
-        />
-      );
-
-      expect(container).toBeTruthy();
-    });
-  });
-
-  it('should handle target position updates', () => {
-    const mockOnClick = vi.fn();
-    const { rerender } = render(
-      <Cinnamoroll3D
-        onClick={mockOnClick}
-        animation="walk"
-        targetPosition={{ x: 25, y: 25 }}
-        isMoving={true}
-      />
-    );
-
-    rerender(
-      <Cinnamoroll3D
-        onClick={mockOnClick}
-        animation="walk"
-        targetPosition={{ x: 75, y: 75 }}
-        isMoving={true}
-      />
-    );
-
-    expect(mockOnClick).not.toHaveBeenCalled();
-  });
-
-  it('should call onClick handler when clicked', () => {
-    const mockOnClick = vi.fn();
+  it('should render canvas element', () => {
+    const mockOnKeyPress = vi.fn();
     const { container } = render(
-      <Cinnamoroll3D
-        onClick={mockOnClick}
-        animation="float"
-        targetPosition={{ x: 50, y: 50 }}
-        isMoving={false}
-      />
+      <Cinnamoroll3D onKeyPress={mockOnKeyPress} />
     );
 
     const canvas = container.querySelector('canvas');
     expect(canvas).toBeTruthy();
   });
 
-  it('should handle isMoving state', () => {
-    const mockOnClick = vi.fn();
-    const { rerender } = render(
-      <Cinnamoroll3D
-        onClick={mockOnClick}
-        animation="float"
-        targetPosition={{ x: 50, y: 50 }}
-        isMoving={false}
-      />
+  it('should handle spacebar key press for jump', async () => {
+    const mockOnKeyPress = vi.fn();
+    const user = userEvent.setup();
+    
+    render(<Cinnamoroll3D onKeyPress={mockOnKeyPress} />);
+    
+    await user.keyboard(' ');
+    
+    expect(mockOnKeyPress).toHaveBeenCalled();
+  });
+
+  it('should handle F key press for orbit animation', async () => {
+    const mockOnKeyPress = vi.fn();
+    const user = userEvent.setup();
+    
+    render(<Cinnamoroll3D onKeyPress={mockOnKeyPress} />);
+    
+    await user.keyboard('f');
+    
+    expect(mockOnKeyPress).toHaveBeenCalled();
+  });
+
+  it('should handle C key press for spin animation', async () => {
+    const mockOnKeyPress = vi.fn();
+    const user = userEvent.setup();
+    
+    render(<Cinnamoroll3D onKeyPress={mockOnKeyPress} />);
+    
+    await user.keyboard('c');
+    
+    expect(mockOnKeyPress).toHaveBeenCalled();
+  });
+
+  it('should accept onKeyPress callback', () => {
+    const mockOnKeyPress = vi.fn();
+    const { container } = render(
+      <Cinnamoroll3D onKeyPress={mockOnKeyPress} />
     );
 
-    rerender(
-      <Cinnamoroll3D
-        onClick={mockOnClick}
-        animation="walk"
-        targetPosition={{ x: 60, y: 60 }}
-        isMoving={true}
-      />
+    expect(container).toBeTruthy();
+  });
+
+  it('should render with full dimensions', () => {
+    const mockOnKeyPress = vi.fn();
+    const { container } = render(
+      <Cinnamoroll3D onKeyPress={mockOnKeyPress} />
     );
 
-    rerender(
-      <Cinnamoroll3D
-        onClick={mockOnClick}
-        animation="float"
-        targetPosition={{ x: 60, y: 60 }}
-        isMoving={false}
-      />
-    );
-
-    expect(mockOnClick).not.toHaveBeenCalled();
+    const canvas = container.querySelector('canvas');
+    expect(canvas).toBeTruthy();
   });
 });

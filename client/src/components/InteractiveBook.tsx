@@ -112,6 +112,10 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
     setTimeout(() => setCinnamorollAnimation('float'), 600);
   };
 
+  const handleKeyPress = (key: string) => {
+    // Las animaciones se manejan dentro del componente Cinnamoroll3D
+  };
+
   const handlePageClick = (e: any) => {
     if (currentPageIndex !== bookPages.length - 1) return;
     
@@ -230,27 +234,8 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           </div>
 
           {/* Página Derecha - Blanca con Cinnamoroll */}
-          <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center border-l-2 border-celeste-romantic/30 overflow-y-auto relative cursor-pointer" onClick={handlePageClick}>
-            {currentPageIndex === bookPages.length - 1 ? (
-              <div className="relative w-full h-full flex items-center justify-center">
-                <div className="w-full h-full" onClick={handlePageClick}>
-                  <Cinnamoroll3D
-                    onClick={handleCinnamorollClick}
-                    animation={cinnamorollAnimation}
-                    targetPosition={cinnamorollPos}
-                    isMoving={isMoving}
-                  />
-                </div>
-                <p className="absolute bottom-4 text-sm text-gray-500 text-center z-10">Haz clic en mí o en la página</p>
-              </div>
-            ) : (
-              <div className="text-center">
-                <p className="text-sm text-gray-500 mb-4">Página {currentPageIndex + 1} de {bookPages.length}</p>
-                <div className="w-full h-1 bg-gradient-to-r from-rosa-pastel via-celeste-romantic to-rosa-pastel rounded-full mb-6" style={{
-                  width: `${((currentPageIndex + 1) / bookPages.length) * 100}%`,
-                }} />
-              </div>
-            )}
+          <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center border-l-2 border-celeste-romantic/30 overflow-y-auto relative">
+            <Cinnamoroll3D onKeyPress={handleKeyPress} />
           </div>
         </div>
 
