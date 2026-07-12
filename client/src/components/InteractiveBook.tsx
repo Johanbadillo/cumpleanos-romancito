@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Cinnamoroll3D from './Cinnamoroll3D';
 import { useAchievementSystem, AchievementNotifications } from './AchievementSystem';
+import { ConfettiAnimation } from './ConfettiAnimation';
 
 interface InteractiveBookProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
   const [cinnamorollPos, setCinnamorollPos] = useState({ x: 50, y: 50 });
   const [cinnamorollAnimation, setCinnamorollAnimation] = useState<'walk' | 'float' | 'eat' | 'spin' | 'ears'>('float');
   const [isMoving, setIsMoving] = useState(false);
-  const { achievements, notifications, trackFunctionUsed, trackLastPageReached } = useAchievementSystem();
+  const { achievements, notifications, trackFunctionUsed, trackLastPageReached, confettiTrigger } = useAchievementSystem();
   
   const bookPages = photoUrl ? [
     ...BOOK_PAGES,
@@ -365,6 +366,7 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
       
       {/* Sistema de Logros */}
       <AchievementNotifications notifications={notifications} />
+      <ConfettiAnimation trigger={confettiTrigger} />
       </div>
     </div>
   );

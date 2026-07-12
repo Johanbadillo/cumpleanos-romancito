@@ -48,6 +48,7 @@ export function useAchievementSystem() {
   const [notifications, setNotifications] = useState<AchievementNotification[]>([]);
   const [usedFunctions, setUsedFunctions] = useState<Set<string>>(new Set());
   const [songsHeard, setSongsHeard] = useState<Set<string>>(new Set());
+  const [confettiTrigger, setConfettiTrigger] = useState(false);
 
   const playNotificationSound = useCallback(() => {
     const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -86,6 +87,8 @@ export function useAchievementSystem() {
         const unlockedAch = updated.find((a) => a.id === achievementId);
         if (unlockedAch && !achievements.find((a) => a.id === achievementId)?.unlocked) {
           playNotificationSound();
+          setConfettiTrigger(true);
+          setTimeout(() => setConfettiTrigger(false), 100);
 
           const notification: AchievementNotification = {
             id: `${achievementId}-${Date.now()}`,
@@ -148,6 +151,7 @@ export function useAchievementSystem() {
     trackLastPageReached,
     usedFunctions,
     songsHeard,
+    confettiTrigger,
   };
 }
 
