@@ -77,22 +77,32 @@ export async function refreshSpotifyAccessToken(
 
 // Get user's playlists
 export async function getUserPlaylists(accessToken: string): Promise<SpotifyPlaylist[]> {
-  const response = await axios.get(`${SPOTIFY_API_URL}/me/playlists`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    params: {
-      limit: 50,
-    },
-  });
+  try {
+    const response = await axios.get(`${SPOTIFY_API_URL}/me/playlists`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: {
+        limit: 50,
+      },
+    });
 
-  return response.data.items.map((playlist: any) => ({
-    id: playlist.id,
-    name: playlist.name,
-    description: playlist.description || '',
-    imageUrl: playlist.images[0]?.url || '',
-    trackCount: playlist.tracks.total,
-  }));
+    if (!response.data || !response.data.items) {
+      console.error('Invalid Spotify response:', response.data);
+      return [];
+    }
+
+    return response.data.items.map((playlist: any) => ({
+      id: playlist.id,
+      name: playlist.name,
+      description: playlist.description || '',
+      imageUrl: playlist.images[0]?.url || '',
+      trackCount: playlist.tracks?.total || 0,
+    }));
+  } catch (error) {
+    console.error('Error fetching playlists:', error);
+    throw error;
+  }
 }
 
 // Get playlist tracks
