@@ -30,7 +30,9 @@ export default function SpotifyAdmin() {
   const [error, setError] = useState<string | null>(null);
 
   // Queries y mutations
-  const getAuthUrl = trpc.spotify.getAuthUrl.useQuery({ redirectUri: `${window.location.origin}/spotify-callback` });
+  // Usar siempre la URL de producción para Spotify
+  const spotifyRedirectUri = 'https://cumple-roman-guasuug4.manus.space/spotify-callback';
+  const getAuthUrl = trpc.spotify.getAuthUrl.useQuery({ redirectUri: spotifyRedirectUri });
   const handleCallback = trpc.spotify.handleCallback.useMutation();
   const getPlaylistsQuery = trpc.spotify.getPlaylists.useQuery();
   const getPlaylistTracksQuery = trpc.spotify.getPlaylistTracks.useQuery(
@@ -87,7 +89,7 @@ export default function SpotifyAdmin() {
 
     if (code) {
       handleCallback.mutate(
-        { code, redirectUri: `${window.location.origin}/spotify-callback` },
+        { code, redirectUri: spotifyRedirectUri },
         {
           onSuccess: async () => {
             window.history.replaceState({}, document.title, window.location.pathname);
@@ -116,6 +118,8 @@ export default function SpotifyAdmin() {
 
   const handleConnect = () => {
     if (getAuthUrl.data?.authUrl) {
+      // Guardar la URL actual para redirigir después de autenticarse
+      sessionStorage.setItem('spotify_return_url', window.location.href);
       window.location.href = getAuthUrl.data.authUrl;
     }
   };
