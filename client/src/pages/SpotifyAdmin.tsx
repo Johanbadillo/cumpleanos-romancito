@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Music, LogOut, Loader2, CheckCircle2 } from 'lucide-react';
+import { Music, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 
 interface Playlist {
   id: string;
@@ -22,31 +22,55 @@ interface Track {
 }
 
 export default function SpotifyAdmin() {
-  const [isConnected, setIsConnected] = useState(false);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
   const [tracks, setTracks] = useState<Track[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Queries y mutations
   const getAuthUrl = trpc.spotify.getAuthUrl.useQuery({ redirectUri: `${window.location.origin}/spotify-callback` });
   const handleCallback = trpc.spotify.handleCallback.useMutation();
-  const getPlaylists = trpc.spotify.getPlaylists.useQuery(undefined, { enabled: false });
-  const getPlaylistTracks = trpc.spotify.getPlaylistTracks.useQuery(
+  const getPlaylistsQuery = trpc.spotify.getPlaylists.useQuery(undefined, { enabled: false });
+  const getPlaylistTracksQuery = trpc.spotify.getPlaylistTracks.useQuery(
     { playlistId: selectedPlaylist?.id || '' },
     { enabled: false }
   );
-  const selectPlaylist = trpc.spotify.selectPlaylist.useMutation();
+  const selectPlaylistMutation = trpc.spotify.selectPlaylist.useMutation();
   const getConfig = trpc.spotify.getConfig.useQuery();
 
-  // Verificar si ya está conectado
+  // Cargar playlists al montar o cuando cambia la autenticación
   useEffect(() => {
-    if (getConfig.data) {
-      setIsConnected(true);
-      loadPlaylists();
-    }
-  }, [getConfig.data]);
+    const loadPlaylists = async () => {
+      setLoading(true);
+      try {
+        const result = await getPlaylistsQuery.refetch();
+        if (result.data?.playlists) {
+          setPlaylists(result.data.playlists);
+          
+          // Si hay una playlist seleccionada previamente, cargarla
+          if (getConfig.data?.selectedPlaylistId) {
+            const selected = result.data.playlists.find((p) => p.id === getConfig.data?.selectedPlaylistId);
+            if (selected) {
+              setSelectedPlaylist(selected);
+              await loadTracks(selected.id);
+            }
+          }
+        }
+        setError(null);
+      } catch (err: any) {
+        if (err.message.includes('Not authenticated')) {
+          setError('Necesitas conectarte con Spotify primero');
+        } else {
+          setError('Error al cargar playlists');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadPlaylists();
+  }, []);
 
   // Procesar callback de Spotify
   useEffect(() => {
@@ -57,10 +81,15 @@ export default function SpotifyAdmin() {
       handleCallback.mutate(
         { code, redirectUri: `${window.location.origin}/spotify-callback` },
         {
-          onSuccess: () => {
-            setIsConnected(true);
+          onSuccess: async () => {
             window.history.replaceState({}, document.title, window.location.pathname);
-            loadPlaylists();
+            // Recargar playlists después de autenticarse
+            setLoading(true);
+            const result = await getPlaylistsQuery.refetch();
+            if (result.data?.playlists) {
+              setPlaylists(result.data.playlists);
+            }
+            setLoading(false);
           },
           onError: (error) => {
             setError(`Error de autenticación: ${error.message}`);
@@ -70,30 +99,9 @@ export default function SpotifyAdmin() {
     }
   }, []);
 
-  const loadPlaylists = async () => {
-    setLoading(true);
-    try {
-      const result = await getPlaylists.refetch();
-      if (result.data?.playlists) {
-        setPlaylists(result.data.playlists);
-        if (getConfig.data?.selectedPlaylistId) {
-          const selected = result.data.playlists.find((p) => p.id === getConfig.data?.selectedPlaylistId);
-          if (selected) {
-            setSelectedPlaylist(selected);
-            loadTracks(selected.id);
-          }
-        }
-      }
-    } catch (err) {
-      setError('Error al cargar playlists');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const loadTracks = async (playlistId: string) => {
     try {
-      const result = await getPlaylistTracks.refetch();
+      const result = await getPlaylistTracksQuery.refetch();
       if (result.data?.tracks) {
         setTracks(result.data.tracks);
       }
@@ -105,7 +113,7 @@ export default function SpotifyAdmin() {
   const handleSelectPlaylist = async (playlist: Playlist) => {
     setSelectedPlaylist(playlist);
     try {
-      await selectPlaylist.mutateAsync({
+      await selectPlaylistMutation.mutateAsync({
         playlistId: playlist.id,
         playlistName: playlist.name,
       });
@@ -121,22 +129,15 @@ export default function SpotifyAdmin() {
     }
   };
 
-  const handleDisconnect = () => {
-    setIsConnected(false);
-    setPlaylists([]);
-    setSelectedPlaylist(null);
-    setTracks([]);
-    // Aquí podrías agregar una mutation para desconectar
-  };
-
-  if (!isConnected) {
+  // Si hay error de autenticación, mostrar botón de conectar
+  if (error?.includes('Necesitas conectarte')) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-rosa-pastel to-celeste-romantic">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <Music className="w-12 h-12 mx-auto mb-4 text-green-500" />
+            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-orange-500" />
             <CardTitle>Conectar Spotify</CardTitle>
-            <CardDescription>Conecta tu cuenta de Spotify Premium para usar tus playlists</CardDescription>
+            <CardDescription>Necesitas conectarte con tu cuenta de Spotify Premium</CardDescription>
           </CardHeader>
           <CardContent>
             <Button
@@ -156,15 +157,9 @@ export default function SpotifyAdmin() {
     <div className="min-h-screen bg-gradient-to-br from-rosa-pastel to-celeste-romantic p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-white mb-2">🎵 Administrador de Spotify</h1>
-            <p className="text-white/80">Selecciona una playlist para usar en tu libro de cumpleaños</p>
-          </div>
-          <Button variant="outline" onClick={handleDisconnect} className="gap-2">
-            <LogOut className="w-4 h-4" />
-            Desconectar
-          </Button>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-white mb-2">🎵 Selecciona tu Playlist</h1>
+          <p className="text-white/80">Elige la playlist que deseas usar en tu libro de cumpleaños</p>
         </div>
 
         {error && (
@@ -187,6 +182,11 @@ export default function SpotifyAdmin() {
                 {loading ? (
                   <div className="flex justify-center py-8">
                     <Loader2 className="w-8 h-8 animate-spin text-green-500" />
+                  </div>
+                ) : playlists.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Music className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-600">No se encontraron playlists</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
