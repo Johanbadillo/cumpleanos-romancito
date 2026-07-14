@@ -8,13 +8,6 @@
       "when": 1781123066291,
       "tag": "0000_flat_enchantress",
       "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1784043996807,
-      "tag": "0001_ancient_dreadnoughts",
-      "breakpoints": true
     }
   ]
 }

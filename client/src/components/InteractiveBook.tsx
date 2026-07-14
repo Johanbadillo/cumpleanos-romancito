@@ -1,8 +1,6 @@
 import { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import Cinnamoroll3D from './Cinnamoroll3D';
-import { useAchievementSystem, AchievementNotifications } from './AchievementSystem';
-import { ConfettiAnimation } from './ConfettiAnimation';
 
 interface InteractiveBookProps {
   isOpen: boolean;
@@ -69,7 +67,6 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
   const [cinnamorollPos, setCinnamorollPos] = useState({ x: 50, y: 50 });
   const [cinnamorollAnimation, setCinnamorollAnimation] = useState<'walk' | 'float' | 'eat' | 'spin' | 'ears'>('float');
   const [isMoving, setIsMoving] = useState(false);
-  const { achievements, notifications, trackFunctionUsed, trackLastPageReached, confettiTrigger } = useAchievementSystem();
   
   const bookPages = photoUrl ? [
     ...BOOK_PAGES,
@@ -94,13 +91,7 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
   const handleNextPage = () => {
     if (currentPageIndex < bookPages.length - 1) {
       playPageTurnSound();
-      const nextIndex = currentPageIndex + 1;
-      setCurrentPageIndex(nextIndex);
-      
-      // Verificar si es la última página
-      if (nextIndex === bookPages.length - 1) {
-        trackLastPageReached();
-      }
+      setCurrentPageIndex(currentPageIndex + 1);
     }
   };
 
@@ -181,10 +172,7 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           style={{
             left: `${heart.left}%`,
             top: '-30px',
-            animationName: 'floatUp',
-            animationDuration: `${heart.duration}s`,
-            animationTimingFunction: 'ease-in',
-            animationFillMode: 'forwards',
+            animation: `floatUp ${heart.duration}s ease-in forwards`,
             animationDelay: `${heart.delay}s`,
             opacity: 0.6,
           }}
@@ -248,7 +236,7 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           {/* Página Derecha - Blanca con Cinnamoroll */}
           <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center border-l-2 border-celeste-romantic/30 overflow-y-auto relative">
             {currentPageIndex === bookPages.length - 1 ? (
-              <Cinnamoroll3D onKeyPress={handleKeyPress} onFunctionUsed={trackFunctionUsed} />
+              <Cinnamoroll3D onKeyPress={handleKeyPress} />
             ) : (
               <div className="text-center">
                 <p className="text-sm text-gray-500 mb-4">Página {currentPageIndex + 1} de {bookPages.length}</p>
@@ -363,10 +351,6 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
             50% { transform: translateY(-20px); }
           }
         `}</style>
-      
-      {/* Sistema de Logros */}
-      <AchievementNotifications notifications={notifications} />
-      <ConfettiAnimation trigger={confettiTrigger} />
       </div>
     </div>
   );

@@ -3,7 +3,6 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { getAllPhotos, createPhoto, deletePhoto, getAllMessages, createMessage, deleteMessage, getAllSongs, createSong, deleteSong } from "./db";
-import { spotifyRouter } from "./routers-spotify";
 import { z } from "zod";
 import { InsertPhoto, InsertMessage, InsertSong } from "../drizzle/schema";
 
@@ -69,9 +68,6 @@ export const appRouter = router({
       .input(z.object({ id: z.number() }))
       .mutation(({ input }) => deleteSong(input.id)),
   }),
-
-  // Router para Spotify
-  spotify: spotifyRouter,
 });
 
 export type AppRouter = typeof appRouter;

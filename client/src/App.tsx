@@ -7,7 +7,6 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import Content from "./pages/Content";
-import SpotifyAdmin from "./pages/SpotifyAdmin";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -16,8 +15,6 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/content"} component={Content} />
       <Route path={"/admin"} component={Admin} />
-      <Route path={"/spotify"} component={SpotifyAdmin} />
-      <Route path={"/spotify-callback"} component={SpotifyAdmin} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

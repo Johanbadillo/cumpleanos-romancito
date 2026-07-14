@@ -13,7 +13,6 @@ interface Particle {
 
 interface Cinnamoroll3DProps {
   onKeyPress?: (key: string) => void;
-  onFunctionUsed?: (functionName: string) => void;
 }
 
 function ParticleSystem({ particles }: { particles: Particle[] }) {
@@ -44,7 +43,7 @@ function ParticleSystem({ particles }: { particles: Particle[] }) {
   );
 }
 
-function CinnamorollModel({ onKeyPress, onFunctionUsed }: Cinnamoroll3DProps) {
+function CinnamorollModel({ onKeyPress }: Cinnamoroll3DProps) {
   const group = useRef<THREE.Group>(null);
   const { scene } = useGLTF('/scene.gltf');
   const [model, setModel] = useState<THREE.Group | null>(null);
@@ -121,7 +120,6 @@ function CinnamorollModel({ onKeyPress, onFunctionUsed }: Cinnamoroll3DProps) {
           jumpVelocityRef.current = 0.15;
           setAnimation('jump');
           playSound('jump');
-          onFunctionUsed?.('jump');
         }
       } else if (key === 'f') {
         e.preventDefault();
@@ -130,29 +128,24 @@ function CinnamorollModel({ onKeyPress, onFunctionUsed }: Cinnamoroll3DProps) {
         velocityRef.current.y = (Math.random() - 0.5) * 0.05;
         playSound('spin');
         createConfetti();
-        onFunctionUsed?.('orbit');
       } else if (key === 'c') {
         e.preventDefault();
         setAnimation('spin');
         playSound('spin');
         createConfetti();
-        onFunctionUsed?.('spin');
       } else if (key === 'r') {
         e.preventDefault();
         setAnimation('bow');
         playSound('bow');
-        onFunctionUsed?.('bow');
       } else if (key === 'd') {
         e.preventDefault();
         setAnimation('dance');
         playSound('dance');
         createConfetti();
-        onFunctionUsed?.('dance');
       } else if (key === 'm') {
         e.preventDefault();
         setAnimation('eat');
         playSound('eat');
-        onFunctionUsed?.('eat');
       }
 
       onKeyPress?.(key);
