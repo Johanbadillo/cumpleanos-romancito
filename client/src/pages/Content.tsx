@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import { Link } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trash2, Plus, Music, Heart, Image as ImageIcon } from 'lucide-react';
+import { Trash2, Plus, Music, Heart, Image as ImageIcon, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 
 /**
@@ -145,9 +146,17 @@ export default function Content() {
     <div className="min-h-screen bg-gradient-to-br from-celeste-romantic/10 via-white to-rosa-pastel/10 py-12">
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-rosa-pastel mb-2">Gestor de Contenido</h1>
-          <p className="text-gray-600">Agrega fotos, mensajes y música para el cumpleaños especial</p>
+        <div className="flex justify-between items-start mb-12">
+          <div className="text-left">
+            <h1 className="text-4xl font-bold text-rosa-pastel mb-2">Gestor de Contenido</h1>
+            <p className="text-gray-600">Agrega fotos, mensajes y música para el cumpleaños especial</p>
+          </div>
+          <Link href="/spotify">
+            <Button className="gap-2 bg-green-500 hover:bg-green-600">
+              <Settings size={18} />
+              Spotify
+            </Button>
+          </Link>
         </div>
 
         {/* Tabs */}
