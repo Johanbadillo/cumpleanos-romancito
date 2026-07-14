@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Music, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Music, Loader2, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
 
 interface Playlist {
   id: string;
@@ -26,51 +26,59 @@ export default function SpotifyAdmin() {
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(null);
   const [tracks, setTracks] = useState<Track[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingPlaylists, setLoadingPlaylists] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Queries y mutations
   const getAuthUrl = trpc.spotify.getAuthUrl.useQuery({ redirectUri: `${window.location.origin}/spotify-callback` });
   const handleCallback = trpc.spotify.handleCallback.useMutation();
-  const getPlaylistsQuery = trpc.spotify.getPlaylists.useQuery(undefined, { enabled: false });
+  const getPlaylistsQuery = trpc.spotify.getPlaylists.useQuery();
   const getPlaylistTracksQuery = trpc.spotify.getPlaylistTracks.useQuery(
     { playlistId: selectedPlaylist?.id || '' },
-    { enabled: false }
+    { enabled: !!selectedPlaylist?.id }
   );
   const selectPlaylistMutation = trpc.spotify.selectPlaylist.useMutation();
   const getConfig = trpc.spotify.getConfig.useQuery();
 
-  // Cargar playlists al montar o cuando cambia la autenticación
+  // Cargar playlists cuando la query esté lista
   useEffect(() => {
-    const loadPlaylists = async () => {
-      setLoading(true);
-      try {
-        const result = await getPlaylistsQuery.refetch();
-        if (result.data?.playlists) {
-          setPlaylists(result.data.playlists);
-          
-          // Si hay una playlist seleccionada previamente, cargarla
-          if (getConfig.data?.selectedPlaylistId) {
-            const selected = result.data.playlists.find((p) => p.id === getConfig.data?.selectedPlaylistId);
-            if (selected) {
-              setSelectedPlaylist(selected);
-              await loadTracks(selected.id);
-            }
-          }
+    if (getPlaylistsQuery.data?.playlists) {
+      setPlaylists(getPlaylistsQuery.data.playlists);
+      
+      // Si hay una playlist seleccionada previamente, cargarla
+      if (getConfig.data?.selectedPlaylistId) {
+        const selected = getPlaylistsQuery.data.playlists.find(
+          (p) => p.id === getConfig.data?.selectedPlaylistId
+        );
+        if (selected) {
+          setSelectedPlaylist(selected);
         }
-        setError(null);
-      } catch (err: any) {
-        if (err.message.includes('Not authenticated')) {
-          setError('Necesitas conectarte con Spotify primero');
-        } else {
-          setError('Error al cargar playlists');
-        }
-      } finally {
-        setLoading(false);
       }
-    };
+      
+      setError(null);
+      setLoading(false);
+    }
+  }, [getPlaylistsQuery.data, getConfig.data]);
 
-    loadPlaylists();
-  }, []);
+  // Cargar canciones cuando cambia la playlist seleccionada
+  useEffect(() => {
+    if (getPlaylistTracksQuery.data?.tracks) {
+      setTracks(getPlaylistTracksQuery.data.tracks);
+    }
+  }, [getPlaylistTracksQuery.data]);
+
+  // Manejar errores de carga de playlists
+  useEffect(() => {
+    if (getPlaylistsQuery.error) {
+      const errorMsg = (getPlaylistsQuery.error as any).message || 'Error al cargar playlists';
+      if (errorMsg.includes('Not authenticated')) {
+        setError('Necesitas conectarte con Spotify primero');
+      } else {
+        setError(errorMsg);
+      }
+      setLoading(false);
+    }
+  }, [getPlaylistsQuery.error]);
 
   // Procesar callback de Spotify
   useEffect(() => {
@@ -84,31 +92,15 @@ export default function SpotifyAdmin() {
           onSuccess: async () => {
             window.history.replaceState({}, document.title, window.location.pathname);
             // Recargar playlists después de autenticarse
-            setLoading(true);
-            const result = await getPlaylistsQuery.refetch();
-            if (result.data?.playlists) {
-              setPlaylists(result.data.playlists);
-            }
-            setLoading(false);
+            await getPlaylistsQuery.refetch();
           },
           onError: (error) => {
-            setError(`Error de autenticación: ${error.message}`);
+            setError(`Error de autenticación: ${(error as any).message}`);
           },
         }
       );
     }
   }, []);
-
-  const loadTracks = async (playlistId: string) => {
-    try {
-      const result = await getPlaylistTracksQuery.refetch();
-      if (result.data?.tracks) {
-        setTracks(result.data.tracks);
-      }
-    } catch (err) {
-      setError('Error al cargar canciones');
-    }
-  };
 
   const handleSelectPlaylist = async (playlist: Playlist) => {
     setSelectedPlaylist(playlist);
@@ -117,7 +109,6 @@ export default function SpotifyAdmin() {
         playlistId: playlist.id,
         playlistName: playlist.name,
       });
-      await loadTracks(playlist.id);
     } catch (err) {
       setError('Error al seleccionar playlist');
     }
@@ -126,6 +117,17 @@ export default function SpotifyAdmin() {
   const handleConnect = () => {
     if (getAuthUrl.data?.authUrl) {
       window.location.href = getAuthUrl.data.authUrl;
+    }
+  };
+
+  const handleRefresh = async () => {
+    setLoadingPlaylists(true);
+    try {
+      await getPlaylistsQuery.refetch();
+    } catch (err) {
+      setError('Error al refrescar playlists');
+    } finally {
+      setLoadingPlaylists(false);
     }
   };
 
@@ -157,9 +159,20 @@ export default function SpotifyAdmin() {
     <div className="min-h-screen bg-gradient-to-br from-rosa-pastel to-celeste-romantic p-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">🎵 Selecciona tu Playlist</h1>
-          <p className="text-white/80">Elige la playlist que deseas usar en tu libro de cumpleaños</p>
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h1 className="text-4xl font-bold text-white mb-2">🎵 Selecciona tu Playlist</h1>
+            <p className="text-white/80">Elige la playlist que deseas usar en tu libro de cumpleaños</p>
+          </div>
+          <Button
+            onClick={handleRefresh}
+            disabled={loadingPlaylists || getPlaylistsQuery.isLoading}
+            variant="outline"
+            className="gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${loadingPlaylists ? 'animate-spin' : ''}`} />
+            Refrescar
+          </Button>
         </div>
 
         {error && (
@@ -179,7 +192,7 @@ export default function SpotifyAdmin() {
                 <CardDescription>{playlists.length} playlists encontradas</CardDescription>
               </CardHeader>
               <CardContent>
-                {loading ? (
+                {loading || getPlaylistsQuery.isLoading ? (
                   <div className="flex justify-center py-8">
                     <Loader2 className="w-8 h-8 animate-spin text-green-500" />
                   </div>
@@ -239,7 +252,11 @@ export default function SpotifyAdmin() {
                 <CardDescription>{tracks.length} canciones</CardDescription>
               </CardHeader>
               <CardContent>
-                {selectedPlaylist && tracks.length > 0 ? (
+                {selectedPlaylist && getPlaylistTracksQuery.isLoading ? (
+                  <div className="flex justify-center py-4">
+                    <Loader2 className="w-6 h-6 animate-spin text-green-500" />
+                  </div>
+                ) : selectedPlaylist && tracks.length > 0 ? (
                   <div className="space-y-2 max-h-96 overflow-y-auto">
                     {tracks.map((track, index) => (
                       <div key={track.id} className="text-sm p-2 rounded bg-gray-50 hover:bg-gray-100">
