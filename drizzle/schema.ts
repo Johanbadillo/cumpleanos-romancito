@@ -74,3 +74,24 @@ export const songs = mysqlTable("songs", {
 
 export type Song = typeof songs.$inferSelect;
 export type InsertSong = typeof songs.$inferInsert;
+
+/**
+ * Tabla para almacenar configuración de Spotify
+ */
+export const spotifyConfig = mysqlTable("spotifyConfig", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id),
+  spotifyUserId: varchar("spotifyUserId", { length: 255 }).notNull(),
+  spotifyEmail: varchar("spotifyEmail", { length: 320 }),
+  spotifyDisplayName: varchar("spotifyDisplayName", { length: 255 }),
+  accessToken: text("accessToken").notNull(),
+  refreshToken: text("refreshToken"),
+  selectedPlaylistId: varchar("selectedPlaylistId", { length: 255 }),
+  selectedPlaylistName: varchar("selectedPlaylistName", { length: 255 }),
+  tokenExpiresAt: timestamp("tokenExpiresAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SpotifyConfig = typeof spotifyConfig.$inferSelect;
+export type InsertSpotifyConfig = typeof spotifyConfig.$inferInsert;

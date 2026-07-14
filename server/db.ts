@@ -1,6 +1,6 @@
 import { eq, asc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, photos, messages, songs, Photo, Message, Song, InsertPhoto, InsertMessage, InsertSong } from "../drizzle/schema";
+import { InsertUser, users, photos, messages, songs, spotifyConfig, Photo, Message, Song, InsertPhoto, InsertMessage, InsertSong, SpotifyConfig, InsertSpotifyConfig } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
