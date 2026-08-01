@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import PageLoadingScreen from '@/components/PageLoadingScreen';
 import InteractiveBook from '@/components/InteractiveBook';
+import FullscreenSurpriseAnimation from '@/components/FullscreenSurpriseAnimation';
 import { Heart, X } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useAuth } from '@/_core/hooks/useAuth';
@@ -24,6 +25,7 @@ export default function Home() {
   const [showMusic, setShowMusic] = useState(false);
   const [showBook, setShowBook] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [triggerSurprise, setTriggerSurprise] = useState(false);
 
   // Cargar datos de la base de datos
   const { data: dbPhotos = [], isLoading: isLoadingPhotos } = trpc.photos.list.useQuery();
@@ -154,7 +156,10 @@ export default function Home() {
               Sumérgete en una historia romántica inspirada en El Principito y la Rosa. Un viaje mágico a través del universo del amor.
             </p>
             <RomanticButton
-              onClick={() => setShowBook(true)}
+              onClick={() => {
+                setShowBook(true);
+                setTriggerSurprise(true);
+              }}
               variant="primary"
               size="md"
             >
@@ -365,6 +370,12 @@ export default function Home() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Fullscreen Surprise Animation */}
+      <FullscreenSurpriseAnimation 
+        trigger={triggerSurprise} 
+        onComplete={() => setTriggerSurprise(false)}
+      />
 
       {/* Pie de página elegante */}
       <Footer 
