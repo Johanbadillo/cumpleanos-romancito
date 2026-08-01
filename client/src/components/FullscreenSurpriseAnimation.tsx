@@ -64,56 +64,44 @@ export default function FullscreenSurpriseAnimation({ trigger, onComplete }: Ful
 
       {/* Contenido principal */}
       <div className="relative w-full h-full flex flex-col items-center justify-center">
-        {/* Corazones que se llenan */}
-        <div className="flex gap-8 mb-12">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="relative w-20 h-20">
-              {/* Corazón vacío */}
-              <div className="absolute inset-0 text-5xl opacity-20">💕</div>
-              {/* Corazón lleno con animación */}
-              {hearts >= i && (
-                <div
-                  className="absolute inset-0 text-5xl"
-                  style={{
-                    animation: `fillHeart 0.8s ease-out forwards`,
-                    animationDelay: `${(i - 1) * 0.8}s`,
-                  }}
-                >
-                  💕
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+  
 
         {/* Texto cinematográfico */}
-        {hearts >= 3 && (
-          <div
-            className="text-center"
+        <div
+          className="text-center"
+          style={{
+            animation: `fadeInScale 1.5s ease-out forwards`,
+            animationDelay: '0.5s',
+          }}
+        >
+          <h1
+            className="text-7xl font-bold mb-4"
             style={{
-              animation: `fadeInScale 1.5s ease-out forwards`,
-              animationDelay: '2.4s',
+              background: 'linear-gradient(135deg, #FF1493 0%, #FF69B4 25%, #FFB6C1 50%, #FF1493 75%, #FF69B4 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              textShadow: '0 0 30px rgba(255, 20, 147, 0.8)',
+              letterSpacing: '0.15em',
+              filter: 'drop-shadow(0 0 20px rgba(255, 20, 147, 0.6))',
             }}
           >
-            <h1
-              className="text-6xl font-bold text-rosa-pastel mb-4"
-              style={{
-                textShadow: '0 4px 20px rgba(255, 182, 193, 0.8), 0 0 40px rgba(255, 182, 193, 0.4)',
-                letterSpacing: '0.1em',
-              }}
-            >
-              GRACIAS LUDY
-            </h1>
-            <p
-              className="text-3xl text-celeste-romantic font-allura"
-              style={{
-                textShadow: '0 2px 10px rgba(173, 216, 230, 0.8), 0 0 30px rgba(173, 216, 230, 0.4)',
-              }}
-            >
-              Eres una gran mujer y persona
-            </p>
-          </div>
-        )}
+            GRACIAS LUDY
+          </h1>
+          <p
+            className="text-4xl font-allura"
+            style={{
+              background: 'linear-gradient(135deg, #00CED1 0%, #00BFFF 50%, #87CEEB 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              textShadow: '0 0 25px rgba(0, 206, 209, 0.8)',
+              filter: 'drop-shadow(0 0 15px rgba(0, 206, 209, 0.6))',
+            }}
+          >
+            Eres una gran mujer y persona
+          </p>
+        </div>
 
         {/* Pétalos cayendo */}
         {petals.map((petal) => (
@@ -153,17 +141,6 @@ export default function FullscreenSurpriseAnimation({ trigger, onComplete }: Ful
           }
           100% {
             opacity: 0;
-          }
-        }
-
-        @keyframes fillHeart {
-          from {
-            opacity: 0;
-            transform: scale(0.5);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
           }
         }
 
