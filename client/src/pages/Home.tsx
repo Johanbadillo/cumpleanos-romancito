@@ -95,6 +95,7 @@ export default function Home() {
             size="lg"
             variant="primary"
             className="drop-shadow-lg"
+            onClick={() => setTriggerSurprise(true)}
           >
             Explorar la Sorpresa
           </RomanticButton>
@@ -156,10 +157,7 @@ export default function Home() {
               Sumérgete en una historia romántica inspirada en El Principito y la Rosa. Un viaje mágico a través del universo del amor.
             </p>
             <RomanticButton
-              onClick={() => {
-                setShowBook(true);
-                setTriggerSurprise(true);
-              }}
+              onClick={() => setShowBook(true)}
               variant="primary"
               size="md"
             >
