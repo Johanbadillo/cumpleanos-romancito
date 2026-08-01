@@ -197,16 +197,16 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           <X className="w-6 h-6 text-black" />
         </button>
 
-        <div className="flex h-full">
+        <div className="flex h-full flex-col sm:flex-row">
           {/* Página Izquierda - Blanca */}
-          <div className="w-1/2 bg-white p-8 flex flex-col justify-center border-r-2 border-rosa-pastel/30 overflow-y-auto">
+          <div className="w-full sm:w-1/2 bg-white p-4 sm:p-8 flex flex-col justify-center border-b-2 sm:border-b-0 sm:border-r-2 border-rosa-pastel/30 overflow-y-auto max-h-[50vh] sm:max-h-none">
             {(currentPage as any)?.isPhotoPage ? (
               <div className="flex flex-col items-center justify-center h-full">
                 {photoUrl && (
                   <div className="relative mb-6" style={{
                     animation: 'floatingFrame 3s ease-in-out infinite',
                   }}>
-                    <div className="w-64 h-64 rounded-2xl overflow-hidden shadow-2xl border-4 border-rosa-pastel"
+                    <div className="w-40 h-40 sm:w-64 sm:h-64 rounded-lg sm:rounded-2xl overflow-hidden shadow-2xl border-4 border-rosa-pastel"
                       style={{
                         background: 'linear-gradient(135deg, rgba(255,182,193,0.3) 0%, rgba(173,216,230,0.3) 100%)',
                         boxShadow: '0 0 40px rgba(255,182,193,0.4)',
@@ -216,17 +216,17 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
                     </div>
                   </div>
                 )}
-                <p className="text-center text-rosa-pastel text-lg font-allura mt-6 max-w-md">
+                <p className="text-center text-rosa-pastel text-sm sm:text-lg font-allura mt-4 sm:mt-6 max-w-xs sm:max-w-md px-2">
                   {dedication || 'Para la mujer que hace mi vida completa. Eres mi luz, mi inspiración y mi razón de sonreír cada día. Te amo infinitamente. 💕✨'}
                 </p>
               </div>
             ) : (
               <>
-                <h2 className="text-3xl font-tangerine text-rosa-pastel mb-2">{currentPage?.title}</h2>
+                <h2 className="text-2xl sm:text-3xl font-tangerine text-rosa-pastel mb-2">{currentPage?.title}</h2>
                 {currentPage?.subtitle && (
-                  <p className="text-lg font-allura text-celeste-romantic mb-6">{currentPage.subtitle}</p>
+                  <p className="text-base sm:text-lg font-allura text-celeste-romantic mb-4 sm:mb-6">{currentPage.subtitle}</p>
                 )}
-                <p className="text-sm leading-relaxed font-allura text-gray-700 whitespace-pre-wrap">
+                <p className="text-xs sm:text-sm leading-relaxed font-allura text-gray-700 whitespace-pre-wrap">
                   {currentPage?.content}
                 </p>
               </>
@@ -234,13 +234,13 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           </div>
 
           {/* Página Derecha - Blanca con Cinnamoroll */}
-          <div className="w-1/2 bg-white p-8 flex flex-col justify-center items-center border-l-2 border-celeste-romantic/30 overflow-y-auto relative">
+          <div className="w-full sm:w-1/2 bg-white p-4 sm:p-8 flex flex-col justify-center items-center border-t-2 sm:border-t-0 sm:border-l-2 border-celeste-romantic/30 overflow-y-auto relative min-h-[40vh] sm:min-h-auto">
             {currentPageIndex === bookPages.length - 1 ? (
               <Cinnamoroll3D onKeyPress={handleKeyPress} />
             ) : (
-              <div className="text-center">
-                <p className="text-sm text-gray-500 mb-4">Página {currentPageIndex + 1} de {bookPages.length}</p>
-                <div className="w-full h-1 bg-gradient-to-r from-rosa-pastel via-celeste-romantic to-rosa-pastel rounded-full mb-6" style={{
+              <div className="text-center w-full">
+                <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">Página {currentPageIndex + 1} de {bookPages.length}</p>
+                <div className="w-full h-1 bg-gradient-to-r from-rosa-pastel via-celeste-romantic to-rosa-pastel rounded-full" style={{
                   width: `${((currentPageIndex + 1) / bookPages.length) * 100}%`,
                 }} />
               </div>
@@ -248,21 +248,21 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           </div>
         </div>
 
-        <div className="absolute bottom-4 left-0 right-0 flex justify-between items-center px-8">
+        <div className="absolute bottom-2 sm:bottom-4 left-0 right-0 flex justify-between items-center px-4 sm:px-8">
           <button
             onClick={handlePrevPage}
             disabled={currentPageIndex === 0}
-            className="p-2 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg border-2 border-gray-800"
+            className="p-1.5 sm:p-2 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg border-2 border-gray-800"
           >
-            <ChevronLeft className="w-6 h-6 text-black" />
+            <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6 text-black" />
           </button>
 
           <button
             onClick={handleNextPage}
             disabled={currentPageIndex === bookPages.length - 1}
-            className="p-2 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg border-2 border-gray-800"
+            className="p-1.5 sm:p-2 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg border-2 border-gray-800"
           >
-            <ChevronRight className="w-6 h-6 text-black" />
+            <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6 text-black" />
           </button>
         </div>
 
