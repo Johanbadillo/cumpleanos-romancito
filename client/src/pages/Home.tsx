@@ -9,7 +9,6 @@ import PageLoadingScreen from '@/components/PageLoadingScreen';
 import InteractiveBook from '@/components/InteractiveBook';
 import { Heart, X } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import SurpriseModal from '@/components/SurpriseModal';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 
@@ -25,7 +24,6 @@ export default function Home() {
   const [showMusic, setShowMusic] = useState(false);
   const [showBook, setShowBook] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [showSurprise, setShowSurprise] = useState(false);
 
   // Cargar datos de la base de datos
   const { data: dbPhotos = [], isLoading: isLoadingPhotos } = trpc.photos.list.useQuery();
@@ -337,28 +335,6 @@ export default function Home() {
 
       </div>
 
-      {/* Sección Explorar Sorpresa */}
-      <div className="mb-16">
-        <RomanticCard
-          title="Una Sorpresa Especial"
-          subtitle="El final perfecto para tu día"
-          animated
-        >
-          <p className="mb-6 text-gray-600">
-            Haz clic en el botón para descubrir una sorpresa llena de amor y flores. Un momento especial que hemos preparado solo para ti.
-          </p>
-          <div className="flex justify-center">
-            <RomanticButton
-              onClick={() => setShowSurprise(true)}
-              variant="primary"
-              size="md"
-            >
-              Explorar Sorpresa ✨
-            </RomanticButton>
-          </div>
-        </RomanticCard>
-      </div>
-
       {/* Libro Interactivo Modal */}
       <InteractiveBook 
         isOpen={showBook} 
@@ -389,12 +365,6 @@ export default function Home() {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Surprise Modal */}
-      <SurpriseModal 
-        isOpen={showSurprise} 
-        onClose={() => setShowSurprise(false)}
-      />
 
       {/* Pie de página elegante */}
       <Footer 
