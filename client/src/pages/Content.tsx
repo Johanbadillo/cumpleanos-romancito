@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trash2, Plus, Music, Heart, Image as ImageIcon } from 'lucide-react';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Trash2, Plus, Music, Heart, Image as ImageIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 /**
@@ -15,6 +16,7 @@ import { toast } from 'sonner';
  */
 export default function Content() {
   const [loading, setLoading] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Queries
   const { data: photos = [], refetch: refetchPhotos } = trpc.photos.list.useQuery();
@@ -227,7 +229,8 @@ export default function Content() {
                       <img
                         src={photo.imageUrl}
                         alt={photo.title}
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-16 h-16 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => setSelectedImage(photo.imageUrl)}
                       />
                       <div>
                         <p className="font-semibold text-gray-800">{photo.title}</p>
@@ -415,6 +418,29 @@ export default function Content() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Modal para visualizar imagen en pantalla completa */}
+        <Dialog open={!!selectedImage} onOpenChange={(open) => !open && setSelectedImage(null)}>
+          <DialogContent className="max-w-4xl w-full h-auto max-h-[90vh] p-0 bg-black/90 border-0">
+            <div className="relative w-full h-full flex items-center justify-center">
+              {selectedImage && (
+                <>
+                  <img
+                    src={selectedImage}
+                    alt="Imagen en pantalla completa"
+                    className="max-w-full max-h-[85vh] object-contain"
+                  />
+                  <button
+                    onClick={() => setSelectedImage(null)}
+                    className="absolute top-4 right-4 bg-white/20 hover:bg-white/40 rounded-full p-2 transition-colors"
+                  >
+                    <X size={24} className="text-white" />
+                  </button>
+                </>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
