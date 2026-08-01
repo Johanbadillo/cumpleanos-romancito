@@ -7,7 +7,8 @@ import Footer from '@/components/Footer';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import PageLoadingScreen from '@/components/PageLoadingScreen';
 import InteractiveBook from '@/components/InteractiveBook';
-import { Heart } from 'lucide-react';
+import { Heart, X } from 'lucide-react';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 
@@ -22,6 +23,7 @@ export default function Home() {
   const [showMessages, setShowMessages] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
   const [showBook, setShowBook] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Cargar datos de la base de datos
   const { data: dbPhotos = [], isLoading: isLoadingPhotos } = trpc.photos.list.useQuery();
@@ -197,6 +199,7 @@ export default function Home() {
                     <div
                       key={photo.id}
                       className="relative rounded-2xl h-48 overflow-hidden hover:shadow-romantic-lg transition-all duration-300 hover:scale-105 cursor-pointer"
+                      onClick={() => setSelectedImage(photo.imageUrl)}
                     >
                       <img
                         src={photo.imageUrl}
@@ -339,6 +342,29 @@ export default function Home() {
         photoUrl="/manus-storage/WhatsAppImage2026-06-14at3.56.15PM_3db50c1f.jpeg"
         dedication="Para la mujer que hace mi vida completa. Eres mi luz, mi inspiración y mi razón de sonreír cada día. Te amo infinitamente. 💕✨"
       />
+
+      {/* Modal para visualizar imagen en pantalla completa */}
+      <Dialog open={!!selectedImage} onOpenChange={(open) => !open && setSelectedImage(null)}>
+        <DialogContent className="max-w-4xl w-full h-auto max-h-[90vh] p-0 bg-black/90 border-0">
+          <div className="relative w-full h-full flex items-center justify-center">
+            {selectedImage && (
+              <>
+                <img
+                  src={selectedImage}
+                  alt="Imagen en pantalla completa"
+                  className="max-w-full max-h-[85vh] object-contain"
+                />
+                <button
+                  onClick={() => setSelectedImage(null)}
+                  className="absolute top-4 right-4 bg-white/20 hover:bg-white/40 rounded-full p-2 transition-colors"
+                >
+                  <X size={24} className="text-white" />
+                </button>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Pie de página elegante */}
       <Footer 

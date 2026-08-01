@@ -192,9 +192,9 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
       }}>
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 z-20 p-2 hover:bg-rosa-pastel/30 rounded-full transition-all duration-300 backdrop-blur-sm"
+          className="absolute top-4 right-4 z-20 p-2 hover:bg-gray-200 rounded-full transition-all duration-300 backdrop-blur-sm bg-white border-2 border-gray-800"
         >
-          <X className="w-6 h-6 text-white drop-shadow-lg" />
+          <X className="w-6 h-6 text-black" />
         </button>
 
         <div className="flex h-full">
@@ -252,17 +252,17 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           <button
             onClick={handlePrevPage}
             disabled={currentPageIndex === 0}
-            className="p-2 rounded-full bg-rosa-pastel/80 hover:bg-rosa-pastel disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg"
+            className="p-2 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg border-2 border-gray-800"
           >
-            <ChevronLeft className="w-6 h-6 text-white" />
+            <ChevronLeft className="w-6 h-6 text-black" />
           </button>
 
           <button
             onClick={handleNextPage}
             disabled={currentPageIndex === bookPages.length - 1}
-            className="p-2 rounded-full bg-celeste-romantic/80 hover:bg-celeste-romantic disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg"
+            className="p-2 rounded-full bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-110 shadow-lg border-2 border-gray-800"
           >
-            <ChevronRight className="w-6 h-6 text-white" />
+            <ChevronRight className="w-6 h-6 text-black" />
           </button>
         </div>
 
