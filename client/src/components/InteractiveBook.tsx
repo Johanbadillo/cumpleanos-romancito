@@ -12,52 +12,49 @@ interface InteractiveBookProps {
 const BOOK_PAGES = [
   {
     id: 'page1',
-    title: 'El Principito y la Rosa',
+    title: 'Un Viajero Celestial',
     subtitle: 'Una Historia de Amor Eterno',
-    content: `Érase una vez un pequeño príncipe que viajaba por el universo en busca de respuestas. En su planeta encontró una rosa única, diferente a todas las demás.
+    content: `Había un viajero que recorría el universo buscando la razón de su existencia. Visitó mil planetas, conoció mil historias, pero su corazón permanecía vacío.
 
-La rosa era hermosa, pero también frágil. El principito la cuidaba cada día, protegiéndola del viento y dándole agua con su corazón.
+Hasta que un día, en un rincón del cosmos, encontró una flor que brillaba diferente. No era la más grande, ni la más vistosa, pero poseía una luz que solo él podía ver.
 
-"Eres mi rosa especial", le decía cada mañana, y ella sonreía en silencio.`,
+Desde ese momento, supo que había encontrado lo que buscaba: una razón para sonreír cada mañana.`,
   },
   {
     id: 'page2',
-    title: 'El Viaje',
-    content: `El principito decidió viajar por otros planetas para entender mejor el universo. Pero cada noche, miraba hacia su planeta y pensaba en su rosa.
+    title: 'El Descubrimiento',
+    content: `Cada día dedicaba horas a cuidar esa flor con devoción. Le hablaba de sus sueños, de sus miedos, de las cosas que lo hacían feliz. Y ella, con su silencio, lo escuchaba como nadie más lo había hecho.
 
-"¿Estará bien sin mí?", se preguntaba.
+Poco a poco, el viajero comprendió que no era ella quien lo necesitaba, sino él quien la necesitaba a ella. Ella era su refugio, su paz, su razón de ser.
 
-Conoció a muchas personas, visitó lugares maravillosos, pero nada comparaba con el brillo de los ojos de su rosa cuando lo veía regresar.`,
+Cada pétalo de esa flor guardaba un momento especial, cada espina era una promesa de protegerla para siempre.`,
   },
   {
     id: 'page3',
-    title: 'El Descubrimiento',
-    content: `Un día, el principito comprendió algo importante: no es la belleza de la rosa lo que la hace especial, sino el amor que le dedica.
+    title: 'La Transformación',
+    content: `Lo que comenzó como un viaje solitario se convirtió en una danza de dos almas. El viajero dejó de buscar respuestas en el universo, porque la respuesta estaba en sus manos.
 
-"Lo que hace importante a mi rosa es el tiempo que pasé cuidándola", pensó.
+Su vida cambió de colores. Las noches se hicieron más brillantes, los días más cálidos, cada momento más valioso. Ella lo enseñó que el amor verdadero no es perfecto, sino real.
 
-Esa verdad cambió su forma de ver el mundo. Cada momento con ella era un tesoro infinito.`,
+Que no se trata de encontrar a alguien sin defectos, sino de encontrar a alguien cuyos defectos te hacen sonreír.`,
   },
   {
     id: 'page4',
-    title: 'El Regreso',
-    content: `El principito regresó a su planeta con el corazón lleno de alegría. La rosa lo esperaba, más hermosa que nunca.
+    title: 'Eternidad en Cada Momento',
+    content: `Ahora, cada amanecer es una nueva oportunidad de demostrar su amor. Cada mirada es un poema sin palabras, cada caricia es una promesa renovada.
 
-Se abrazaron bajo las estrellas, y en ese momento, ambos comprendieron que el amor verdadero trasciende el tiempo y el espacio.
+El viajero dejó de buscar porque ya había encontrado. Su corazón que una vez vagaba perdido por el cosmos, ahora tiene un hogar.
 
-"Te amo", susurró el principito.
-"Y yo te amo a ti", respondió la rosa con toda su esencia.`,
+Y ese hogar no es un lugar, sino una persona. Eres tú, niña. Te amo y mi vida ha cambiado mucho contigo.`,
   },
   {
     id: 'page5',
-    title: 'Epílogo: Para Siempre',
-    content: `Así es como termina esta historia, pero no es un final, sino un comienzo.
+    title: 'Para Siempre Comienza Hoy',
+    content: `Esta es nuestra historia, escrita en el cielo con las estrellas como testigos. No es una historia de un viajero y una flor, sino de dos almas que encontraron su destino la una en la otra.
 
-Porque el verdadero amor no termina, solo se transforma. Se convierte en cada amanecer compartido, en cada mirada cómplice, en cada momento que pasan juntos.
+Cada página de este libro es un latido de mi corazón dedicado a ti. Cada palabra es un beso, cada frase es una caricia del alma.
 
-El principito y su rosa siguen viajando por el universo, recordando a todos que el amor verdadero es lo más valioso que existe.
-
-Y si miras al cielo en las noches claras, podrás ver su luz brillando entre las estrellas, recordándote que el amor eterno es posible.`,
+Te amo, niña. Mi vida ha cambiado mucho contigo, y cada día agradezco al universo por haberte puesto en mi camino. Eres mi razón, mi paz, mi eternidad.`,
   },
 ];
 
