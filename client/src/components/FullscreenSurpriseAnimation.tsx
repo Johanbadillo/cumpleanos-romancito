@@ -56,7 +56,10 @@ export default function FullscreenSurpriseAnimation({ trigger, onComplete }: Ful
     <div
       className="fixed inset-0 z-50 pointer-events-none"
       style={{
-        animation: `fadeInOut 8s ease-in-out forwards`,
+        animationName: 'fadeInOut',
+        animationDuration: '8s',
+        animationTimingFunction: 'ease-in-out',
+        animationFillMode: 'forwards',
       }}
     >
       {/* Fondo con gradiente suave */}
@@ -70,7 +73,10 @@ export default function FullscreenSurpriseAnimation({ trigger, onComplete }: Ful
         <div
           className="text-center"
           style={{
-            animation: `fadeInScale 1.5s ease-out forwards`,
+            animationName: 'fadeInScale',
+            animationDuration: '1.5s',
+            animationTimingFunction: 'ease-out',
+            animationFillMode: 'forwards',
             animationDelay: '0.5s',
           }}
         >
@@ -111,13 +117,19 @@ export default function FullscreenSurpriseAnimation({ trigger, onComplete }: Ful
             style={{
               left: `${petal.left}%`,
               top: '-30px',
-              animation: `fallPetal 4s linear forwards`,
+              animationName: 'fallPetal',
+              animationDuration: '4s',
+              animationTimingFunction: 'linear',
+              animationFillMode: 'forwards',
               animationDelay: `${petal.delay}s`,
             }}
           >
             <div
               style={{
-                animation: `rotatePetal 3s linear infinite`,
+                animationName: 'rotatePetal',
+                animationDuration: '3s',
+                animationTimingFunction: 'linear',
+                animationIterationCount: 'infinite',
                 fontSize: '1.5rem',
               }}
             >

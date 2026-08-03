@@ -87,9 +87,9 @@ export default function Home() {
             Para la mujer mas especial de mi vida
           </p>
           <div className="flex justify-center gap-3 mb-8">
-            <Heart className="text-red-400" size={32} style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} />
-            <Heart className="text-red-400" size={32} style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite 0.2s' }} />
-            <Heart className="text-red-400" size={32} style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite 0.4s' }} />
+            <Heart className="text-red-400" size={32} style={{ animationName: 'pulse', animationDuration: '2s', animationTimingFunction: 'cubic-bezier(0.4, 0, 0.6, 1)', animationIterationCount: 'infinite' }} />
+            <Heart className="text-red-400" size={32} style={{ animationName: 'pulse', animationDuration: '2s', animationTimingFunction: 'cubic-bezier(0.4, 0, 0.6, 1)', animationIterationCount: 'infinite', animationDelay: '0.2s' }} />
+            <Heart className="text-red-400" size={32} style={{ animationName: 'pulse', animationDuration: '2s', animationTimingFunction: 'cubic-bezier(0.4, 0, 0.6, 1)', animationIterationCount: 'infinite', animationDelay: '0.4s' }} />
           </div>
           <RomanticButton
             size="lg"

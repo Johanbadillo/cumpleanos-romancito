@@ -62,9 +62,9 @@ export default function Footer({ birthdayDate, romanticMessage }: FooterProps) {
 
         {/* Decoración con emojis */}
         <div className="flex justify-center gap-6 mb-12">
-          <span className="text-3xl" style={{ animation: 'float 3s ease-in-out infinite' }}>🌷</span>
-          <span className="text-3xl" style={{ animation: 'float 3s ease-in-out infinite 0.3s' }}>💕</span>
-          <span className="text-3xl" style={{ animation: 'float 3s ease-in-out infinite 0.6s' }}>✨</span>
+          <span className="text-3xl" style={{ animationName: 'float', animationDuration: '3s', animationTimingFunction: 'ease-in-out', animationIterationCount: 'infinite' }}>🌷</span>
+          <span className="text-3xl" style={{ animationName: 'float', animationDuration: '3s', animationTimingFunction: 'ease-in-out', animationIterationCount: 'infinite', animationDelay: '0.3s' }}>💕</span>
+          <span className="text-3xl" style={{ animationName: 'float', animationDuration: '3s', animationTimingFunction: 'ease-in-out', animationIterationCount: 'infinite', animationDelay: '0.6s' }}>✨</span>
         </div>
 
         {/* Crédito y cierre */}

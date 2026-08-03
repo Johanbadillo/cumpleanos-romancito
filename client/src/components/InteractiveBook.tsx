@@ -169,7 +169,10 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
           style={{
             left: `${heart.left}%`,
             top: '-30px',
-            animation: `floatUp ${heart.duration}s ease-in forwards`,
+            animationName: 'floatUp',
+            animationDuration: `${heart.duration}s`,
+            animationTimingFunction: 'ease-in',
+            animationFillMode: 'forwards',
             animationDelay: `${heart.delay}s`,
             opacity: 0.6,
           }}
@@ -185,7 +188,9 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
       />
 
       <div className="relative w-full max-w-5xl h-[600px] rounded-2xl shadow-2xl overflow-hidden" style={{
-        animation: 'bookOpen 0.8s ease-out',
+        animationName: 'bookOpen',
+        animationDuration: '0.8s',
+        animationTimingFunction: 'ease-out',
       }}>
         <button
           onClick={handleClose}
@@ -201,7 +206,10 @@ export default function InteractiveBook({ isOpen, onClose, photoUrl, dedication 
               <div className="flex flex-col items-center justify-center h-full">
                 {photoUrl && (
                   <div className="relative mb-6" style={{
-                    animation: 'floatingFrame 3s ease-in-out infinite',
+                    animationName: 'floatingFrame',
+                    animationDuration: '3s',
+                    animationTimingFunction: 'ease-in-out',
+                    animationIterationCount: 'infinite',
                   }}>
                     <div className="w-40 h-40 sm:w-64 sm:h-64 rounded-lg sm:rounded-2xl overflow-hidden shadow-2xl border-4 border-rosa-pastel"
                       style={{
