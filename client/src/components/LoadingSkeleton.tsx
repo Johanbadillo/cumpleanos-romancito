@@ -18,7 +18,9 @@ export default function LoadingSkeleton({ type, count = 1 }: LoadingSkeletonProp
             key={i}
             className="relative rounded-2xl h-48 overflow-hidden bg-gradient-to-r from-rosa-pastel/20 via-celeste-romantic/20 to-rosa-pastel/20 animate-pulse"
             style={{
-              animation: `shimmer 2s infinite`,
+              animationName: 'shimmer',
+              animationDuration: '2s',
+              animationIterationCount: 'infinite',
               animationDelay: `${i * 0.1}s`,
               backgroundSize: '200% 100%',
             }}
@@ -38,7 +40,10 @@ export default function LoadingSkeleton({ type, count = 1 }: LoadingSkeletonProp
             key={i}
             className="border border-rosa-pastel/20 rounded-lg p-4"
             style={{
-              animation: `fadeInOut 2s ease-in-out infinite`,
+              animationName: 'fadeInOut',
+              animationDuration: '2s',
+              animationTimingFunction: 'ease-in-out',
+              animationIterationCount: 'infinite',
               animationDelay: `${i * 0.15}s`,
             }}
           >
@@ -64,7 +69,10 @@ export default function LoadingSkeleton({ type, count = 1 }: LoadingSkeletonProp
             key={i}
             className="border-l-4 border-rosa-pastel/30 pl-6 py-3"
             style={{
-              animation: `slideInFromLeft 1.5s ease-out infinite`,
+              animationName: 'slideInFromLeft',
+              animationDuration: '1.5s',
+              animationTimingFunction: 'ease-out',
+              animationIterationCount: 'infinite',
               animationDelay: `${i * 0.2}s`,
             }}
           >

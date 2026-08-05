@@ -83,7 +83,10 @@ export default function PageLoadingScreen({ isLoading, minDuration = 5000 }: Pag
             alt="Cinnamoroll cargando"
             className="w-48 h-48 object-contain animate-bounce"
             style={{
-              animation: 'bounce 1.5s ease-in-out infinite',
+              animationName: 'bounce',
+              animationDuration: '1.5s',
+              animationTimingFunction: 'ease-in-out',
+              animationIterationCount: 'infinite',
             }}
           />
           
@@ -94,7 +97,10 @@ export default function PageLoadingScreen({ isLoading, minDuration = 5000 }: Pag
                 key={i}
                 className="absolute text-2xl"
                 style={{
-                  animation: `float 3s ease-in-out infinite`,
+                  animationName: 'float',
+                  animationDuration: '3s',
+                  animationTimingFunction: 'ease-in-out',
+                  animationIterationCount: 'infinite',
                   animationDelay: `${i * 0.3}s`,
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
@@ -111,7 +117,10 @@ export default function PageLoadingScreen({ isLoading, minDuration = 5000 }: Pag
           <p 
             className="text-lg font-semibold text-rosa-pastel mb-2 h-8 transition-all duration-500"
             style={{
-              animation: 'fadeInOut 1.5s ease-in-out infinite',
+              animationName: 'fadeInOut',
+              animationDuration: '1.5s',
+              animationTimingFunction: 'ease-in-out',
+              animationIterationCount: 'infinite',
             }}
           >
             {currentMessage}
@@ -120,19 +129,28 @@ export default function PageLoadingScreen({ isLoading, minDuration = 5000 }: Pag
           {/* Animación de puntos */}
           <div className="flex items-center justify-center gap-1">
             <span className="text-celeste-romantic text-2xl" style={{
-              animation: 'pulse 1.5s ease-in-out infinite',
+              animationName: 'pulse',
+              animationDuration: '1.5s',
+              animationTimingFunction: 'ease-in-out',
+              animationIterationCount: 'infinite',
               animationDelay: '0s',
             }}>
               •
             </span>
             <span className="text-celeste-romantic text-2xl" style={{
-              animation: 'pulse 1.5s ease-in-out infinite',
+              animationName: 'pulse',
+              animationDuration: '1.5s',
+              animationTimingFunction: 'ease-in-out',
+              animationIterationCount: 'infinite',
               animationDelay: '0.3s',
             }}>
               •
             </span>
             <span className="text-celeste-romantic text-2xl" style={{
-              animation: 'pulse 1.5s ease-in-out infinite',
+              animationName: 'pulse',
+              animationDuration: '1.5s',
+              animationTimingFunction: 'ease-in-out',
+              animationIterationCount: 'infinite',
               animationDelay: '0.6s',
             }}>
               •
@@ -145,7 +163,10 @@ export default function PageLoadingScreen({ isLoading, minDuration = 5000 }: Pag
           <div
             className="h-full bg-gradient-to-r from-rosa-pastel to-celeste-romantic rounded-full"
             style={{
-              animation: 'slideProgress 2s ease-in-out infinite',
+              animationName: 'slideProgress',
+              animationDuration: '2s',
+              animationTimingFunction: 'ease-in-out',
+              animationIterationCount: 'infinite',
               width: '30%',
             }}
           ></div>

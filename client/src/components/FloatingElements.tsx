@@ -46,7 +46,10 @@ export default function FloatingElements({
           style={{
             left: element.left,
             top: element.top,
-            animation: `${element.animation} ${element.duration}s ease-in-out infinite`,
+            animationName: element.animation,
+            animationDuration: `${element.duration}s`,
+            animationTimingFunction: 'ease-in-out',
+            animationIterationCount: 'infinite',
             animationDelay: `${element.delay}s`,
             opacity: 0.6,
           }}
