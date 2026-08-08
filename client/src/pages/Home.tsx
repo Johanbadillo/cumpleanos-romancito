@@ -8,6 +8,7 @@ import LoadingSkeleton from '@/components/LoadingSkeleton';
 import PageLoadingScreen from '@/components/PageLoadingScreen';
 import InteractiveBook from '@/components/InteractiveBook';
 import FullscreenSurpriseAnimation from '@/components/FullscreenSurpriseAnimation';
+import InteractiveCinnamoroll from '@/components/InteractiveCinnamoroll';
 import { Heart, X } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useAuth } from '@/_core/hooks/useAuth';
@@ -374,6 +375,9 @@ export default function Home() {
         trigger={triggerSurprise} 
         onComplete={() => setTriggerSurprise(false)}
       />
+
+      {/* Cinnamoroll Interactivo Flotante */}
+      <InteractiveCinnamoroll isVisible={!showBook} />
 
       {/* Pie de página elegante */}
       <Footer 
